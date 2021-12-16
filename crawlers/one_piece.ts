@@ -27,12 +27,9 @@ export class OnePieceCrawler extends WebCrawler<Manga> {
             $(element).find('.info > .capitulos.hide > ul > li.volume-capitulo').each((i, cap) => {
                 chapters.push($(cap).text());
             });
+                    
+            const cover = $(element).find('.info > .capitulos.hide > a.capa > img').first().attr('src');
             
-            let cover = new URL("http://localhost");
-            const coverUrl = $(element).find('.info > .capitulos.hide > a.capa > img').first().attr('src');
-            if (coverUrl != undefined) {
-                cover = new URL(coverUrl);
-            }
             
             const manga = new Manga(title, volumeNumber, summary, chapters, cover);
             result.push(manga);

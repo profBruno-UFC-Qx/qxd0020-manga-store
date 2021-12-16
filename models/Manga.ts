@@ -6,7 +6,7 @@ interface Comment {
 }
 
 export class Manga {
-    readonly cover: URL;
+    readonly cover: string;
     readonly title: string;
     readonly volumeNumber: number;
     readonly summary: string;
@@ -14,7 +14,7 @@ export class Manga {
     readonly price: number;
     private _comments: Comment[] = [];
 
-    constructor(title: string,  volumeNumber: number, summary: string = "", chapters: string[], cover: URL = new URL(""), price: number = 30 + Math.random() * 70) {
+    constructor(title: string,  volumeNumber: number, summary: string = "", chapters: string[], cover: string = "", price: number = 30 + Math.random() * 70) {
         this.title = title;
         this.volumeNumber = volumeNumber;
         this.summary = summary;

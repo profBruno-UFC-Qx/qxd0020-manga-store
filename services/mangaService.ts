@@ -15,14 +15,19 @@ export class MangaService {
             for (let record of records) {
                 const title = record.title;
                 const volumeNumber = record.volumeNumber;
-                const cover = record['cover.href'];
-                const price = record.price;
+                const cover = path.basename(record['cover.href']);
+                const price = Number(record.price).toFixed(2);
 
-                const manga = new Manga(title, volumeNumber, "", [], cover, price);
+                const manga = new Manga(title, volumeNumber, "", [], cover, Number(price));
                 this._mangas.push(manga);
             }
         }
         return this._mangas;
+    }
+
+    delete(id: number) {
+        const removed = this._mangas.splice(id, 1);
+        return removed.length === 1;
     }
 }
 

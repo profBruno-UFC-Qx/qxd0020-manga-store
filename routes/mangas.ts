@@ -1,0 +1,44 @@
+import express from 'express';
+import { MangaService } from '../services/mangaService';
+
+const mangaService = new MangaService();
+
+export const router = express.Router();
+
+router.get('/', (req, res) => {
+    const mangas = mangaService.getAll();
+    res.render('index', {
+        pageTitle: 'Mangás do One Piece',
+        mangas: mangas
+    });
+})
+
+router.get('/novo', (req, res) => {
+   res.status(200).send('TODO'); 
+});
+
+router.post('/', (req, res) => {
+    res.status(200).send('TODO');
+});
+
+router.get('/:id', (req, res) => {
+    res.status(200).send('TODO');
+});
+
+router.get('/:id/editar', (req, res) => {
+    res.status(200).send('TODO');
+});
+
+router.put('/:id', (req, res) => {
+    res.status(200).send('TODO');
+});
+
+router.delete('/:id', (req, res) => {
+    const id = req.params.id;
+    
+    if (mangaService.delete(Number(id))) {
+        res.redirect('/mangas');
+    } else {
+        res.status(404).send('Mangá não existe');
+    }
+});

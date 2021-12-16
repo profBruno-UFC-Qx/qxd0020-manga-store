@@ -1,0 +1,22 @@
+{{#each mangas}}
+<div class="col">
+    <div class="card shadow-sm">
+        <img src="/img/one_piece/{{this.cover}}" class="card-img-top" alt="{{this.volumeNumber}}-{{this.title}}">
+
+        <div class="card-body">
+            <h5 class="card-title">{{this.volumeNumber}} - {{this.title}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Preço: {{this.price}}</h6>
+            <p class="card-text">{{this.summary}}</p>
+            <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+                <a href="/mangas/{{this.volumeNumber}}" class="btn btn-sm btn-outline-secondary">View</a>
+                <a href="/mangas/{{this.volumeNumber}}/editar" class="btn btn-sm btn-outline-secondary">Edit</a>
+                
+            </div>
+            <small class="text-muted">9 mins</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{/each}}    
