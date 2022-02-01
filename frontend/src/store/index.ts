@@ -2,14 +2,22 @@ import { createStore } from 'vuex'
 import Axios from 'axios'
 
 const state = {
-    mangas: []
+    mangas: [],
+    manga: null
 }
 
-const getters = {}
+const getters = {
+    numberOfMangas(state){
+        return state.mangas.length
+    }
+}
 
 const mutations = {
     setMangas(state, mangas) {
         state.mangas = mangas
+    },
+    setManga(state, manga) {
+        state.manga = manga
     }
 }
 
@@ -18,6 +26,14 @@ const actions = {
         try {
             const response = await axios.get('/mangas')
             commit('setMangas', response.data)
+        } catch(error) {
+            console.log(error)
+        }
+    },
+    async getManga({ commit }, id) {
+        try {
+            const response = await axios.get(`/mangas/${id}`)
+            commit('setManga', response.data)
         } catch(error) {
             console.log(error)
         }
