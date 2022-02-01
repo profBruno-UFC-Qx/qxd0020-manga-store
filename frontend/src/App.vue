@@ -2,12 +2,12 @@
 import { useStore } from 'vuex'
 
 const store = useStore()
-
 store.dispatch('getMangas')
 
 </script>
 
 <template>
+  <router-view></router-view>
 </template>
 
 <style>
