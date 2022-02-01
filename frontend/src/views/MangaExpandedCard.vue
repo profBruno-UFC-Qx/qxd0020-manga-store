@@ -32,7 +32,7 @@ const numberOfMangas = computed(() => store.getters.numberOfMangas)
     <div class="row align-items-center" v-if="manga !== null">
         <div class="col-md-2">
             <router-link :to="`/mangas/${Math.max(1, id - 1)}`">
-                <button type="button" :class="{disabled: Number(id) === 1}" class="btn btn-lg btn-outline-sencodary">
+                <button type="button" :class="{disabled: Number(id) === 1}" class="btn btn-lg btn-outline-secondary">
                     <i class="bi bi-arrow-left-square-fill"></i>
                 </button>
             </router-link>
@@ -57,8 +57,8 @@ const numberOfMangas = computed(() => store.getters.numberOfMangas)
             </div>
         </div>
         <div class="col-md-2">
-            <router-link :to="`/mangas/${Math.min(id + 1, numberOfMangas)}`">
-                <button type="button" :class="{disabled: Number(id) === numberOfMangas}" class="btn btn-lg btn-outline-sencodary">
+            <router-link :to="`/mangas/${Math.min(Number(id) + 1, numberOfMangas)}`">
+                <button type="button" :class="{disabled: Number(id) === numberOfMangas}" class="btn btn-lg btn-outline-secondary">
                     <i class="bi bi-arrow-right-square-fill"></i>
                 </button>
             </router-link>
