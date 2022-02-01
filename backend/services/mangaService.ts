@@ -54,6 +54,13 @@ export class MangaService {
         return result;
     }
 
+    getById(id: number): Manga | undefined {
+        if(this._mangas.length == 0) {
+            this.loadMangas();
+        }
+        return this._mangas.find(manga => manga.id === id)
+    }
+
     delete(id: number) {
         const removed = this._mangas.splice(id, 1);
         return removed.length === 1;

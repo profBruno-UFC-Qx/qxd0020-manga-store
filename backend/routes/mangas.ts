@@ -19,7 +19,14 @@ router.post('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-    res.status(200).send('TODO');
+    const id = Number(req.params.id)
+    const manga = mangaService.getById(id)
+    if(manga) {
+        res.status(200).json(manga);    
+    } else {
+        res.status(404).json({ msg: "Mangá não encontrado!"})
+    }
+    
 });
 
 router.get('/:id/editar', (req, res) => {
