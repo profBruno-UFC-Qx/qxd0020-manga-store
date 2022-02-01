@@ -3,21 +3,16 @@ import morgan from 'morgan';
 import favicon from 'serve-favicon';
 import path from 'path';
 import { router as mangaRouter } from './routes/mangas';
-import { engine } from 'express-handlebars';
+import cors from 'cors'
 
 const app = express();
-
-app.engine('hbs', engine({
-    layoutsDir: __dirname + `/../views/layouts`,
-    extname: '.hbs'
-}));
-
-app.set('view engine', '.hbs');
-app.set('views', './views');
 
 app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')));
 app.use(morgan('tiny'));
 app.use(express.static('./public'));
+app.use(cors({
+    origin: 'http://localhost:3000'
+}))
 
 app.use('/mangas', mangaRouter);
 

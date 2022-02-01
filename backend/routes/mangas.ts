@@ -7,10 +7,7 @@ export const router = express.Router();
 
 router.get('/', (req, res) => {
     const mangas = mangaService.getAll();
-    res.render('index', {
-        pageTitle: 'Mangás do One Piece',
-        mangas: mangas
-    });
+    res.status(200).json(mangas);
 })
 
 router.get('/novo', (req, res) => {
