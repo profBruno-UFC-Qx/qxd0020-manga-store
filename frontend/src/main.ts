@@ -8,7 +8,7 @@ const app = createApp(App)
 
 app.config.globalProperties.axios = axios
 
-axios.interceptors.response.use(null, error => {
+axios.interceptors.response.use(response => response, error => {
     if(error.response.status === 404) {
         router.replace({
             name: 'notFound',
