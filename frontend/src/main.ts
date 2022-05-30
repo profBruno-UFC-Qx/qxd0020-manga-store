@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
-import { store, axios } from './store'
+import { axios } from './stores/manga'
 import { router } from './router'
 
 const app = createApp(App)
@@ -16,6 +17,6 @@ axios.interceptors.response.use(null, error => {
     }
 })
 
-app.use(store)
+app.use(createPinia())
 app.use(router)
 app.mount('#app')

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from '@vue/runtime-core'
-import { useStore } from 'vuex'
+import { mangaStore } from '../stores/manga'
 import MangaCard from '../components/MangaCard.vue'
 
-const store = useStore()
-const mangas = computed(() => store.state.mangas)
+const store = mangaStore()
+const mangas = computed(() => store.mangas)
 
 </script>
 

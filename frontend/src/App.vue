@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useStore } from 'vuex'
+import { mangaStore } from './stores/manga'
 
-const store = useStore()
-store.dispatch('getMangas')
+const store = mangaStore()
+store.getMangas()
 
 </script>
 

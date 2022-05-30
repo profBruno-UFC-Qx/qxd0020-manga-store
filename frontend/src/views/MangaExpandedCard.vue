@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance } from "vue"
-import { useStore } from "vuex"
+import { mangaStore } from "../stores/manga"
 import { useRoute, onBeforeRouteUpdate } from "vue-router"
 import { imgAlt, imgURL } from '../mixin/mangaMixing'
 
@@ -10,20 +10,20 @@ const props = defineProps<{
     id: string,
 }>()
 
-const store = useStore()
+const store = mangaStore()
 const route = useRoute()
 
 onBeforeRouteUpdate( (to, from) => {
     if(to.params.id !== from.params.id) {
-        store.dispatch('getManga', to.params.id)
+        store.getManga(Number(to.params.id))
     }
 })
 
-store.dispatch('getManga', route.params.id)
+ store.getManga(Number(route.params.id))
 
-const manga = computed(() => store.state.manga)
+const manga = computed(() => store.manga)
 
-const numberOfMangas = computed(() => store.getters.numberOfMangas)
+const numberOfMangas = computed(() => store.numberOfMangas)
 
 </script>
 
