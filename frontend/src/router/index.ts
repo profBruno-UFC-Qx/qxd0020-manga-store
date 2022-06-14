@@ -1,18 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MangaList from './views/MangaList.vue'
-import MangaExpandedCard from './views/MangaExpandedCard.vue'
-import NotFound from './views/NotFound.vue'
+import Home from '../views/Home.vue'
+import MangaExpandedCard from '../views/MangaExpandedCard.vue'
+import NotFound from '../views/NotFound.vue'
 const routes = [ 
     {
         path: "/",
-        component: MangaList,
+        component: Home,
         alias: '/mangas'
     }, 
     {
         path: '/mangas/:id',
         component: MangaExpandedCard,
-        name: 'mangaDetails',
-        props: true
+        name: 'verManga',
     },
     {
         path: '/404',

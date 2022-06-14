@@ -1,38 +1,55 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance } from "vue"
-import { mangaStore } from "../stores/manga"
-import { useRoute, onBeforeRouteUpdate } from "vue-router"
-import { imgAlt, imgURL } from '../mixin/mangaMixing'
+import { onBeforeMount, ref } from 'vue';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { mangaStore } from '../stores/manga'
+import { imgURL } from '../mixin/mangaMixing'
 
-const axios = getCurrentInstance().appContext.config.globalProperties.axios
+interface Comentario {
+    id: number,
+    descricao: string,
+    nota: number
+}
 
-const props = defineProps<{
-    id: string,
-}>()
+interface Manga {
+    id: number,
+    title: string,
+    cover: {
+        url: string,
+        alternativeText: string
+    },
+    comentarios: Comentario[],
+    number: number
+    price: number
+}
 
 const store = mangaStore()
 const route = useRoute()
+const id = route.params.id
+const manga = ref<Manga>()  
 
-onBeforeRouteUpdate( (to, from) => {
-    if(to.params.id !== from.params.id) {
-        store.getManga(Number(to.params.id))
-    }
+onBeforeMount( async () => {
+    manga.value = await store.getManga(Number(id))
 })
 
- store.getManga(Number(route.params.id))
 
-const manga = computed(() => store.manga)
-
-const numberOfMangas = computed(() => store.numberOfMangas)
+onBeforeRouteUpdate( async (to, from) => {
+    if (to.params.id !== from.params.id) {
+        manga.value = await store.getManga(Number(to.params.id))
+    } 
+})
 
 </script>
 
-
 <template>
-    <div class="row align-items-center" v-if="manga !== null">
+    <div class="text-center" v-if="!manga">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div class="row align-items-center" v-else>
         <div class="col-md-2">
-            <router-link :to="`/mangas/${Math.max(1, id - 1)}`">
-                <button type="button" :class="{disabled: Number(id) === 1}" class="btn btn-lg btn-outline-secondary">
+            <router-link :to="{ name: 'verManga', params: { id: manga.id - 1}}">
+                <button type="button" class="btn btn-lg btn-outline-secondary">
                     <i class="bi bi-arrow-left-square-fill"></i>
                 </button>
             </router-link>
@@ -41,27 +58,52 @@ const numberOfMangas = computed(() => store.numberOfMangas)
             <div class="card mb-3">
                 <div class="row g-0">
                     <div class="col-md-4">
-                    <img :src="imgURL(axios, manga.cover)" class="img-fluid rounded-start" :alt="imgAlt(manga.volumeNumber, manga.title)">
+                        <img :src="imgURL(manga.cover.url)" class="w-100 rounded-start" :alt="manga.cover.alternativeText">
                     </div>
                     <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{manga.title}}</h5>
-                        <hr>
-                        <div class="text-start">
-                            <p class="card-text">Volume: {{manga.volumeNumber}}</p>
-                            <p class="card-text"><strong>Preço: <small class="text-danger">{{manga.price}}</small></strong></p>
+                        <div class="card-body">
+                            <h5 class="card-title">{{manga.title}}</h5>
+                            <hr>
+                            <div class="text-start">
+                                <p class="card-text">Volume: {{manga.number}}</p>
+                                <p class="card-text"><strong>Preço: <small class="text-danger">{{manga.price}}</small></strong></p>
+                            </div>
                         </div>
                     </div>
-                    </div>
                 </div>
+                
             </div>
         </div>
         <div class="col-md-2">
-            <router-link :to="`/mangas/${Math.min(Number(id) + 1, numberOfMangas)}`">
-                <button type="button" :class="{disabled: Number(id) === numberOfMangas}" class="btn btn-lg btn-outline-secondary">
+            <router-link :to="{ name: 'verManga', params: { id: manga.id + 1}}">
+                <button type="button" class="btn btn-lg btn-outline-secondary">
                     <i class="bi bi-arrow-right-square-fill"></i>
                 </button>
             </router-link>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h4>Avaliações</h4>
+                <hr>
+                <template v-if="manga?.comentarios.length">
+                    <div class="card m-4 text-start" v-for="comentario in manga?.comentarios">
+                        <div class="card-body">
+                            <h6 class="card-subtitle">
+                                <template v-for="nota in 5">
+                                    <i class="bi bi-star-fill text-warning" v-if="nota <= comentario.nota"></i>
+                                    <i class="bi bi-star text-warning" v-else></i>
+                                </template>
+                            </h6>
+                            <p class="card-text">
+                                {{comentario.descricao}}
+                            </p>
+                        </div>
+                    </div>    
+                </template>
+                <section v-else>
+                    Nenhum comentário feito até o momento
+                </section>   
+            </div> 
         </div>
     </div>
 </template>

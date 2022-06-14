@@ -1,22 +1,20 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-import { axios } from './stores/manga'
+import { api } from './baseConfig'
 import { router } from './router'
 
-const app = createApp(App)
-
-app.config.globalProperties.axios = axios
-
-axios.interceptors.response.use(response => response, error => {
+api.interceptors.response.use(response => response, error => {
     if(error.response.status === 404) {
         router.replace({
             name: 'notFound',
-            params: { msg: error.response.data.msg}
+            params: { msg: error.response.data.error.message }
         })
     }
 })
 
+
+const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.mount('#app')

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed } from '@vue/runtime-core'
+import { computed, onBeforeMount } from 'vue'
 import { mangaStore } from '../stores/manga'
 import MangaCard from '../components/MangaCard.vue'
 
 const store = mangaStore()
 const mangas = computed(() => store.mangas)
+
+onBeforeMount(async () => store.getMangas())
 
 </script>
 
@@ -13,9 +15,8 @@ const mangas = computed(() => store.mangas)
         <MangaCard v-for="manga in mangas" :key="manga.id"
         :id="manga.id"
         :title="manga.title"
-        :summary="manga.summary"
-        :cover="manga.cover"
-        :volumeNumber="manga.volume"
+        :cover="manga.cover.url"
+        :number="manga.number"
         :price="manga.price">
         </MangaCard>
   </div>

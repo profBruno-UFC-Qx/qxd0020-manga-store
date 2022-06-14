@@ -1,23 +1,24 @@
 import { defineStore } from 'pinia'
-import Axios from 'axios'
+import { api } from '../baseConfig'
 
 interface Manga {
+    id: number,
     title: string,
-    cover: string,
-    volumeNumber: number,
+    cover: {
+     url: string
+    },
+    number: number
     price: number
 }
 
 interface State {
     mangas: Manga[],
-    manga: Manga | null
-
 }
 
 export const mangaStore = defineStore('manga', {
     state: (): State => ({
         mangas: [],
-        manga: null
+
     }),
     getters: {
         numberOfMangas: (state) => state.mangas.length
@@ -25,28 +26,29 @@ export const mangaStore = defineStore('manga', {
     actions : {
         async getMangas() {
             try {
-                const response = await axios.get('/mangas')
-                this.mangas = response.data
+                const { data } = await api.get('/mangas', {
+                    params: {
+                        populate: "cover",
+                        "pagination[limit]": 100
+                    }
+                })
+                this.mangas = data.data
             } catch(error) {
                 console.log(error)
             }
         },
         async getManga(id: number) {
             try {
-                const response = await axios.get(`/mangas/${id}`)
-                this.manga = response.data
+                const { data } = await api.get(`/mangas/${id}`, {
+                    params: {
+                        populate: ["cover", "comentarios"],
+                    }
+                })
+                return data.data
             } catch(error) {
                 console.log(error)
+                return null
             }
         }
-    }
-})
-
-export const axios = Axios.create({
-    baseURL: 'http://localhost:8080/',
-    timeout: 1000,
-    headers: {
-        Accept: "application/json",
-        "Content-type": "application/json"
     }
 })

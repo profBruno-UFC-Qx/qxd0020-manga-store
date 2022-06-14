@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { mangaStore } from './stores/manga'
-
-const store = mangaStore()
-store.getMangas()
-
-</script>
-
 <template>
 <header>
       <div class="collapse bg-dark" id="navbarHeader">

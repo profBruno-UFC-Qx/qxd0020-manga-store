@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance } from "vue"
-import { imgAlt, imgURL} from '../mixin/mangaMixing'
-
-const axios = getCurrentInstance().appContext.config.globalProperties.axios
+import { imgURL} from '../mixin/mangaMixing'
 
 const props = defineProps<{
     id: number,
-    cover: URL
+    cover: string
     title: string,
-    volumeNumber: number,
-    summary: string,
+    number: number,
     price: number
 }>()
 
@@ -17,16 +13,15 @@ const props = defineProps<{
 </script>
 <template>
     <div class="col">
-        <router-link :to="`/mangas/${this.id}`" class="text-decoration-none text-reset">
+        <router-link :to="`/mangas/${id}`" class="text-decoration-none text-reset">
             <div class="card shadow-sm">
-                <img :src="imgURL(axios, this.cover)" class="card-img-top" :alt="imgAlt(this.volumeNumber, this.title)">
+                <img :src="imgURL(cover)" class="card-img-top" alt="...">
 
                 <div class="card-body">
-                    <h5 class="card-title">{{this.volumeNumber}} - {{this.title}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Preço: {{this.price}}</h6>
-                    <p class="card-text">{{this.summary}}</p>
+                    <h5 class="card-title">{{number}} - {{title}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Preço: {{price}}</h6>
                     <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">9 mins</small>
+                    <!--<small class="text-muted">9 mins</small>-->
                     </div>
                 </div>
             </div>

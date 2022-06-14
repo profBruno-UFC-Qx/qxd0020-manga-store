@@ -1,9 +1,6 @@
-import { AxiosInstance } from "axios";
+import { baseURL } from "../baseConfig";
 
-export const imgAlt = function(volume: number, title: string) {
-    return `${volume}-${title}`
-} 
 
-export const imgURL = function(axios: AxiosInstance, coverURL: URL) {
-    return `${axios.defaults.baseURL}${coverURL}`    
+export const imgURL = function(coverURL: string) {
+    return `${baseURL}${coverURL}`    
 }

@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "comentarios",
+  "info": {
+    "singularName": "comentario",
+    "pluralName": "comentarios",
+    "displayName": "Comentario"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "descricao": {
+      "type": "richtext",
+      "required": true
+    },
+    "nota": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 5
+    },
+    "manga": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::manga.manga",
+      "inversedBy": "comentarios"
+    }
+  }
+}
