@@ -28,7 +28,7 @@ const lastMangaId = computed(() => store.lastMangaId)
 
 const route = useRoute()
 const id = route.params.id
-const manga = ref<Manga>()  
+const manga = ref<Manga>({} as Manga)  
 
 onBeforeMount( async () => {
     manga.value = await store.get(Number(id))
@@ -44,7 +44,7 @@ onBeforeRouteUpdate( async (to, from) => {
 </script>
 
 <template>
-    <div class="text-center" v-if="!manga">
+    <div class="text-center" v-if="!manga.id">
         <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>

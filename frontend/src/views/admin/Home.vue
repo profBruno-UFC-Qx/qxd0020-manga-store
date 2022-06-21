@@ -47,7 +47,7 @@ async function deleteManga() {
             <td>{{ manga.price }}</td>
             <td>
               <a class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal" @click="askConfirmation(manga.id, manga.title)"><i class="bi bi-trash"></i></a> 
-              <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a></td>
+              <router-link :to="{ name: 'editManga', params: { id: manga.id}}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></router-link></td>
           </tr>
         </tbody>
       </table>

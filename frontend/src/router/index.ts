@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AdminHome from '../views/admin/Home.vue'
+import MangaForm from '../views/admin/MangaForm.vue'
 import Home from '../views/Home.vue'
 import MangaExpandedCard from '../views/MangaInDetails.vue'
 import NotFound from '../views/NotFound.vue'
@@ -8,6 +9,12 @@ const routes = [
     {
         path: "/admin",
         component: AdminHome,
+    },
+    {
+        path: "/admin/manga/:id",
+        component: MangaForm,
+        name: 'editManga',
+        props: true
     }, 
     {
         path: "/",

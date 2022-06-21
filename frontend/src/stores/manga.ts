@@ -68,5 +68,27 @@ export const mangaStore = defineStore('manga', {
                 return null
             }
         },
+        async update(manga: Manga) {
+            const { id, title, number, price} = manga
+            try {
+                const { data } = await api.put(`/mangas/${id}`, {
+                    data: {
+                        title: title,
+                        number:number,
+                        price: price
+                    }
+                })
+                const mangaToUpdate = this.mangas.find( manga => manga.id === id)
+                if(mangaToUpdate) {
+                    mangaToUpdate.title = title
+                    mangaToUpdate.number = number
+                    mangaToUpdate.price = price
+                }
+                return true
+            } catch(error) {
+                console.log(error)
+                return false
+            }
+        }
     }
 })
