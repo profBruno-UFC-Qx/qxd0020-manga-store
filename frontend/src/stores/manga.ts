@@ -54,6 +54,19 @@ export const mangaStore = defineStore('manga', {
                 console.log(error)
                 return null
             }
-        }
+        },
+        async delete(id: number) {
+            try {
+                const { data } = await api.delete(`/mangas/${id}`)
+                const mangaDeleted = this.mangas.find( manga => manga.id === id)
+                if (mangaDeleted) {
+                    this.mangas.splice(this.mangas.indexOf(mangaDeleted), 1)
+                }
+                return data.data
+            } catch(error) {
+                console.log(error)
+                return null
+            }
+        },
     }
 })

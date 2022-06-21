@@ -1,9 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import AdminHome from '../views/admin/Home.vue'
 import Home from '../views/Home.vue'
 import MangaExpandedCard from '../views/MangaInDetails.vue'
 import NotFound from '../views/NotFound.vue'
 
-const routes = [ 
+const routes = [
+    {
+        path: "/admin",
+        component: AdminHome,
+    }, 
     {
         path: "/",
         component: Home,
