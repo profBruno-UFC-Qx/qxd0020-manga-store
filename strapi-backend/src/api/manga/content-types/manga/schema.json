@@ -32,10 +32,10 @@
       "type": "decimal",
       "required": true
     },
-    "comentarios": {
+    "comments": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::comentario.comentario",
+      "target": "api::comment.comment",
       "mappedBy": "manga"
     }
   }

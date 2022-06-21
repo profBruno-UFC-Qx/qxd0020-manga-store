@@ -46,7 +46,7 @@ export const mangaStore = defineStore('manga', {
             try {
                 const { data } = await api.get(`/mangas/${id}`, {
                     params: {
-                        populate: ["cover", "comentarios"],
+                        populate: ["cover", "comments"],
                     }
                 })
                 return data.data

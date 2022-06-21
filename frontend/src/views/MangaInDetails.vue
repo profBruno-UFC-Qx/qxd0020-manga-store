@@ -4,10 +4,10 @@ import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { mangaStore } from '../stores/manga'
 import { imgURL } from '../mixin/mangaMixing'
 
-interface Comentario {
+interface Comments {
     id: number,
-    descricao: string,
-    nota: number
+    description: string,
+    rating: number
 }
 
 interface Manga {
@@ -17,7 +17,7 @@ interface Manga {
         url: string,
         alternativeText: string
     },
-    comentarios: Comentario[],
+    comments: Comments[],
     number: number
     price: number
 }
@@ -88,17 +88,17 @@ onBeforeRouteUpdate( async (to, from) => {
             <div class="col-12">
                 <h4>Avaliações</h4>
                 <hr>
-                <template v-if="manga?.comentarios.length">
-                    <div class="card m-4 text-start" v-for="comentario in manga?.comentarios">
+                <template v-if="manga?.comments.length">
+                    <div class="card m-4 text-start" v-for="comentario in manga?.comments">
                         <div class="card-body">
                             <h6 class="card-subtitle">
                                 <template v-for="nota in 5">
-                                    <i class="bi bi-star-fill text-warning" v-if="nota <= comentario.nota"></i>
+                                    <i class="bi bi-star-fill text-warning" v-if="nota <= comentario.rating"></i>
                                     <i class="bi bi-star text-warning" v-else></i>
                                 </template>
                             </h6>
                             <p class="card-text">
-                                {{comentario.descricao}}
+                                {{comentario.description}}
                             </p>
                         </div>
                     </div>    

@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * comentario service.
+ * comment service.
  */
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::comentario.comentario');
+module.exports = createCoreService('api::comment.comment');
