@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import MangaExpandedCard from '../views/MangaExpandedCard.vue'
+import MangaExpandedCard from '../views/MangaInDetails.vue'
 import NotFound from '../views/NotFound.vue'
+
 const routes = [ 
     {
         path: "/",

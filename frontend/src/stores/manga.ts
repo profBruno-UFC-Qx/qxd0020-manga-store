@@ -21,7 +21,12 @@ export const mangaStore = defineStore('manga', {
 
     }),
     getters: {
-        numberOfMangas: (state) => state.mangas.length
+        lastMangaId(state) {
+            return state.mangas.length === 0 ? 0 : state.mangas[state.mangas.length - 1].id
+        },
+        firstMangaId(state) {
+            return state.mangas.length === 0 ? 0 : state.mangas[0].id
+        }
     },
     actions : {
         async getMangas() {

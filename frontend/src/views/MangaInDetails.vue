@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, computed } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { mangaStore } from '../stores/manga'
 import { imgURL } from '../mixin/mangaMixing'
@@ -23,6 +23,9 @@ interface Manga {
 }
 
 const store = mangaStore()
+const firstMangaId = computed(() => store.firstMangaId)
+const lastMangaId = computed(() => store.lastMangaId)
+
 const route = useRoute()
 const id = route.params.id
 const manga = ref<Manga>()  
@@ -48,8 +51,8 @@ onBeforeRouteUpdate( async (to, from) => {
     </div>
     <div class="row align-items-center" v-else>
         <div class="col-md-2">
-            <router-link :to="{ name: 'verManga', params: { id: manga.id - 1}}">
-                <button type="button" class="btn btn-lg btn-outline-secondary">
+            <router-link :to="{ name: 'verManga', params: { id: Math.max(manga.id - 1, firstMangaId)}}">
+                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === firstMangaId">
                     <i class="bi bi-arrow-left-square-fill"></i>
                 </button>
             </router-link>
@@ -75,8 +78,8 @@ onBeforeRouteUpdate( async (to, from) => {
             </div>
         </div>
         <div class="col-md-2">
-            <router-link :to="{ name: 'verManga', params: { id: manga.id + 1}}">
-                <button type="button" class="btn btn-lg btn-outline-secondary">
+            <router-link :to="{ name: 'verManga', params: { id: Math.min(manga.id + 1, lastMangaId)}}">
+                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === lastMangaId">
                     <i class="bi bi-arrow-right-square-fill"></i>
                 </button>
             </router-link>
