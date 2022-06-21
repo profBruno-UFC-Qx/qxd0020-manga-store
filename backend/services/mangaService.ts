@@ -56,7 +56,7 @@ export class MangaService {
         return result;
     }
 
-    getById(id: number): Manga | undefined {
+    get(id: number): Manga | undefined {
         if(this._mangas.length == 0) {
             this.loadMangas();
         }
@@ -66,6 +66,17 @@ export class MangaService {
     delete(id: number) {
         const removed = this._mangas.splice(id, 1);
         return removed.length === 1;
+    }
+
+    update(id: number, title: string, number: number, price: number): Manga | undefined {
+        const mangaToUpdate = this._mangas.find(m => m.id === id)
+        if(mangaToUpdate) {
+            const mangaUpdated = new Manga(title,
+                 number, "", [], mangaToUpdate.cover.url, price)
+            this._mangas = this._mangas.map(m => m.id === mangaToUpdate.id ? mangaUpdated : m)    
+            return mangaUpdated
+        }
+        return mangaToUpdate
     }
 }
 

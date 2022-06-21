@@ -4,15 +4,17 @@ import favicon from 'serve-favicon';
 import path from 'path';
 import { router as mangaRouter } from './routes/mangas';
 import cors from 'cors'
-
+import bodyParser from 'body-parser';
 const app = express();
 
 app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')));
-app.use(morgan('tiny'));
-app.use(express.static('./public'));
 app.use(cors({
     origin: 'http://localhost:3000'
 }))
+app.use(morgan('tiny'));
+app.use(express.static('./public'));
+app.use(bodyParser.json())
+
 
 app.use('/api/mangas', mangaRouter);
 
