@@ -14,7 +14,7 @@ app.use(cors({
     origin: 'http://localhost:3000'
 }))
 
-app.use('/mangas', mangaRouter);
+app.use('/api/mangas', mangaRouter);
 
 const PORT = 8080;
 

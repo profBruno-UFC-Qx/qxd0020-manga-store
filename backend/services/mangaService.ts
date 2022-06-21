@@ -9,8 +9,10 @@ interface MangaSummary {
     id: number,
     title: string,
     summary: string,
-    cover: string,
-    volume: number,
+    cover: {
+        url: string
+    },
+    number: number,
     price: number
 }
 
@@ -40,14 +42,14 @@ export class MangaService {
 
         for (let manga of this._mangas) {
 
-            const {id, title, cover, volumeNumber, price} = manga
+            const {id, title, cover, number, price} = manga
 
             result.push({
                 id: id,
                 title: title,
                 summary: "",
                 cover: cover,
-                volume: volumeNumber,
+                number: number,
                 price: price
             })
         }
