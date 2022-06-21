@@ -31,13 +31,13 @@ const id = route.params.id
 const manga = ref<Manga>()  
 
 onBeforeMount( async () => {
-    manga.value = await store.getManga(Number(id))
+    manga.value = await store.get(Number(id))
 })
 
 
 onBeforeRouteUpdate( async (to, from) => {
     if (to.params.id !== from.params.id) {
-        manga.value = await store.getManga(Number(to.params.id))
+        manga.value = await store.get(Number(to.params.id))
     } 
 })
 

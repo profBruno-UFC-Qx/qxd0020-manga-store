@@ -42,7 +42,7 @@ export const mangaStore = defineStore('manga', {
                 console.log(error)
             }
         },
-        async getManga(id: number) {
+        async get(id: number) {
             try {
                 const { data } = await api.get(`/mangas/${id}`, {
                     params: {
