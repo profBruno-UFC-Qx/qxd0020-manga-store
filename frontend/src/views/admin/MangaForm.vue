@@ -20,6 +20,7 @@ interface Manga {
 
 const store = mangaStore()
 const manga = ref<Manga>({} as Manga)
+const cover = ref<File>({} as File)
 
 const alertVisible = ref(false)
 const alertMessage = ref('')
@@ -33,13 +34,31 @@ onBeforeMount( async () => {
 
 async function update() {
     const result = await store.update(manga.value) 
-    showAlert(result, "Manga atualizado com sucesso", "O manga não foi atualizado.")
+    showAlert(result, "Manga atualizado com sucesso.", "O manga não foi atualizado.")
+}
+
+function handleFileUpload(event: Event) {
+    const inputEvent = event as InputEvent
+    const target = inputEvent.target as HTMLInputElement
+    cover.value = target.files?.item(0) as File
 }
 
 async function create() {
-    const result = await store.create(manga.value)
-    showAlert(result !== null, "Manga criado com sucesso", "O manga não foi criado.") 
-    manga.value = result
+    const formDataManga = new FormData()
+    if(cover.value.name) {
+        formDataManga.append('files.cover', cover.value, cover.value.name)
+    }
+    formDataManga.append('data', JSON.stringify({
+        title: manga.value.title,
+        number: manga.value.number,
+        price: manga.value.price
+    }))
+
+    const result = await store.create(formDataManga)
+    showAlert(result !== undefined, "Manga criado com sucesso.", "O manga não foi criado.") 
+    if (result){
+        manga.value = result
+    }
 }
 
 function showAlert(success: boolean, successMsg: string, errorMessage: string) {
@@ -69,16 +88,20 @@ if (success) {
         <img class="col-auto" v-if="manga.cover" :src="imgURL(manga.cover.url)"/>
         <div class="row text-start">
             <div class="col-12 mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Manga title</label>
-                <input type="text" class="form-control" v-model="manga.title" placeholder="an awesome title">
+                <label for="coverInput" class="form-label">Manga cover</label>
+                <input type="file" id="coverInput" accept="image/*" @change="handleFileUpload" class="form-control">
+            </div>
+            <div class="col-12 mb-3">
+                <label for="titleInput" class="form-label">Manga title</label>
+                <input type="text" id="titleInput" class="form-control" v-model="manga.title" placeholder="an awesome title">
             </div>
              <div class="col-3 mb-3 ">
-                <label for="exampleFormControlInput1" class="form-label">Manga number</label>
-                <input type="number" class="form-control" v-model="manga.number" placeholder="volume number">
+                <label for="numberInput" class="form-label">Manga number</label>
+                <input type="number" id="numberInput" class="form-control" v-model="manga.number" placeholder="volume number">
             </div>
             <div class="col-2 mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Manga price</label>
-                <input type="text" class="form-control" v-model="manga.price" placeholder="00.00">
+                <label for="priceInput" class="form-label">Manga price</label>
+                <input type="text" id="priceInput" class="form-control" v-model="manga.price" placeholder="00.00">
             </div>
         </div>
         <router-link to="/admin" class="btn btn-danger">Cancel</router-link> 

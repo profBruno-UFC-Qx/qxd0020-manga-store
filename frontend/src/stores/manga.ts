@@ -6,7 +6,8 @@ interface Manga {
     id: number,
     title: string,
     cover: {
-     url: string
+     url: string,
+     alternativeText: string
     },
     number: number
     price: number
@@ -57,20 +58,19 @@ export const mangaStore = defineStore('manga', {
                 return false
             }
         },
-        async create(manga: Manga) {
-            const { title, number, price} = manga
+        async create(manga: FormData) {
             try {
-                const { data } = await api.post(`/mangas/`, {
-                    data: {
-                        title: title,
-                        number:number,
-                        price: price
+                const { data } = await api.post(`/mangas/`, manga, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
                     }
                 })
-                return data.data
+                await this.getMangas()
+
+                return this.mangas.find(m => m.id === data.data.id)
             } catch(error) {
                 console.log(`${error.status} - ${error.data.error.message}`)
-                return false
+                return undefined
             }
         },
         async delete(id: number) {
