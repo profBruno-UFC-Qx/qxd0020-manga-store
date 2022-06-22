@@ -66,7 +66,6 @@ export const mangaStore = defineStore('manga', {
                     }
                 })
                 await this.getMangas()
-
                 return this.mangas.find(m => m.id === data.data.id)
             } catch(error) {
                 console.log(`${error.status} - ${error.data.error.message}`)
@@ -86,26 +85,19 @@ export const mangaStore = defineStore('manga', {
                 return false
             }
         },
-        async update(manga: Manga) {
+        async update(manga: Manga, newCover?: FormData) {
             const { id, title, number, price} = manga
             try {
-                const response = await api.put(`/mangas/${id}`, {
-                    data: {
-                        title: title,
-                        number:number,
-                        price: price
+                const { data } = await api.put(`/mangas/${id}`, newCover, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
                     }
                 })
-                const mangaToUpdate = this.mangas.find( manga => manga.id === id)
-                if(mangaToUpdate) {
-                    mangaToUpdate.title = title
-                    mangaToUpdate.number = number
-                    mangaToUpdate.price = price
-                }
-                return true
+                await this.getMangas()
+                return this.mangas.find(m => m.id === data.data.id)
             } catch(error) {
                 console.log(`${error.status} - ${error.data.error.message}`)
-                return false
+                return undefined
             }
         }
     }

@@ -33,8 +33,21 @@ onBeforeMount( async () => {
 })
 
 async function update() {
-    const result = await store.update(manga.value) 
-    showAlert(result, "Manga atualizado com sucesso.", "O manga não foi atualizado.")
+    let formData = undefined
+    if(cover.value.name) {
+        formData = new FormData()
+        formData.append('files.cover', cover.value)
+        formData.append('data', JSON.stringify({
+            title: manga.value.title,
+            number: manga.value.number,
+            price: manga.value.price
+        }))
+    }
+    const result = await store.update(manga.value, formData) 
+    if(result) {
+        manga.value = result
+    }
+    showAlert(result !== undefined, "Manga atualizado com sucesso.", "O manga não foi atualizado.")
 }
 
 function handleFileUpload(event: Event) {
@@ -44,17 +57,19 @@ function handleFileUpload(event: Event) {
 }
 
 async function create() {
-    const formDataManga = new FormData()
+   
+    const formData = new FormData()
     if(cover.value.name) {
-        formDataManga.append('files.cover', cover.value, cover.value.name)
+        formData.append('files.cover', cover.value, cover.value.name)
     }
-    formDataManga.append('data', JSON.stringify({
+    formData.append('data', JSON.stringify({
         title: manga.value.title,
         number: manga.value.number,
         price: manga.value.price
     }))
 
-    const result = await store.create(formDataManga)
+
+    const result = await store.create(formData)
     showAlert(result !== undefined, "Manga criado com sucesso.", "O manga não foi criado.") 
     if (result){
         manga.value = result
