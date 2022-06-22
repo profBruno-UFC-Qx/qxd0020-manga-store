@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from '../baseConfig'
+import axios, { AxiosError} from 'axios'
 
 interface Manga {
     id: number,
@@ -39,7 +40,8 @@ export const mangaStore = defineStore('manga', {
                 })
                 this.mangas = data.data
             } catch(error) {
-                console.log(error)
+                console.log(`${error.status} - ${error.data.error.message}`)
+                return false
             }
         },
         async get(id: number) {
@@ -51,8 +53,24 @@ export const mangaStore = defineStore('manga', {
                 })
                 return data.data
             } catch(error) {
-                console.log(error)
-                return null
+                console.log(`${error.status} - ${error.data.error.message}`)
+                return false
+            }
+        },
+        async create(manga: Manga) {
+            const { title, number, price} = manga
+            try {
+                const { data } = await api.post(`/mangas/`, {
+                    data: {
+                        title: title,
+                        number:number,
+                        price: price
+                    }
+                })
+                return data.data
+            } catch(error) {
+                console.log(`${error.status} - ${error.data.error.message}`)
+                return false
             }
         },
         async delete(id: number) {
@@ -64,14 +82,14 @@ export const mangaStore = defineStore('manga', {
                 }
                 return data.data
             } catch(error) {
-                console.log(error)
-                return null
+                console.log(`${error.status} - ${error.data.error.message}`)
+                return false
             }
         },
         async update(manga: Manga) {
             const { id, title, number, price} = manga
             try {
-                const { data } = await api.put(`/mangas/${id}`, {
+                const response = await api.put(`/mangas/${id}`, {
                     data: {
                         title: title,
                         number:number,
@@ -86,7 +104,7 @@ export const mangaStore = defineStore('manga', {
                 }
                 return true
             } catch(error) {
-                console.log(error)
+                console.log(`${error.status} - ${error.data.error.message}`)
                 return false
             }
         }

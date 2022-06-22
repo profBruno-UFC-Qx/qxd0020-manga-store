@@ -4,7 +4,7 @@ import { mangaStore } from '../../stores/manga'
 import { imgURL } from '../../mixin/mangaMixing'
 
 const props = defineProps<{
-    id: string
+    id?: string
 }>()
 
 interface Manga {
@@ -26,16 +26,28 @@ const alertMessage = ref('')
 const alertFeedback = ref(false)
 
 onBeforeMount( async () => {
-    manga.value = await store.get(Number(props.id))
+    if(props.id) {
+        manga.value = await store.get(Number(props.id))
+    }
 })
 
 async function update() {
     const result = await store.update(manga.value) 
-    if (result) {
-        alertMessage.value = "Manga atualizado com sucesso"
+    showAlert(result, "Manga atualizado com sucesso", "O manga não foi atualizado.")
+}
+
+async function create() {
+    const result = await store.create(manga.value)
+    showAlert(result !== null, "Manga criado com sucesso", "O manga não foi criado.") 
+    manga.value = result
+}
+
+function showAlert(success: boolean, successMsg: string, errorMessage: string) {
+if (success) {
+        alertMessage.value = successMsg
         alertFeedback.value = true
     } else {
-        alertMessage.value = "O manga não foi atualizado."
+        alertMessage.value = errorMessage
         alertFeedback.value = false
     }
     alertVisible.value = true
@@ -44,7 +56,7 @@ async function update() {
 </script>
 
 <template>
-    <div class="text-center" v-if="!manga.id">
+    <div class="text-center" v-if="!manga.id && props.id">
         <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
@@ -54,21 +66,23 @@ async function update() {
             {{ alertMessage }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <img class="col-auto" :src="imgURL(manga.cover.url)"/>
+        <img class="col-auto" v-if="manga.cover" :src="imgURL(manga.cover.url)"/>
         <div class="row text-start">
             <div class="col-12 mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Manga title</label>
-                <input type="text" class="form-control" v-model="manga.title" placeholder="name@example.com">
+                <input type="text" class="form-control" v-model="manga.title" placeholder="an awesome title">
             </div>
              <div class="col-3 mb-3 ">
                 <label for="exampleFormControlInput1" class="form-label">Manga number</label>
-                <input type="number" class="form-control" v-model="manga.number" placeholder="name@example.com">
+                <input type="number" class="form-control" v-model="manga.number" placeholder="volume number">
             </div>
             <div class="col-2 mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Manga price</label>
-                <input type="text" class="form-control" v-model="manga.price" placeholder="name@example.com">
+                <input type="text" class="form-control" v-model="manga.price" placeholder="00.00">
             </div>
         </div>
-        <router-link to="/admin" class="btn btn-danger">Cancel</router-link> <a class="btn btn-primary" @click="update">Update</a>
+        <router-link to="/admin" class="btn btn-danger">Cancel</router-link> 
+        <a class="btn btn-primary" v-if="manga.id" @click="update">Update</a>
+        <a class="btn btn-success" v-else @click="create">Create</a>
     </template>
 </template>

@@ -11,6 +11,11 @@ const routes = [
         component: AdminHome,
     },
     {
+        path: "/admin/manga/",
+        component: MangaForm,
+        name: 'addManga',
+    }, 
+    {
         path: "/admin/manga/:id",
         component: MangaForm,
         name: 'editManga',
