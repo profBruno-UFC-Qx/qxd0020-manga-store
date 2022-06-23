@@ -17,7 +17,7 @@ const props = defineProps<{
             <div class="card shadow-sm">
                 <img :src="imgURL(cover)" class="card-img-top" alt="...">
 
-                <div class="card-body">
+                <div class="card-body text-center">
                     <h5 class="card-title">{{number}} - {{title}}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Preço: {{price}}</h6>
                     <div class="d-flex justify-content-between align-items-center">

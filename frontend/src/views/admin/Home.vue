@@ -26,6 +26,7 @@ async function deleteManga() {
 </script>
 
 <template>
+    <router-link :to="{ name: 'addManga'}" class="btn btn-success"><i class="bi bi-plus"></i>Add</router-link>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       <table class="table table-striped">
         <thead>
