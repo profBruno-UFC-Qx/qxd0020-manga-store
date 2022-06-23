@@ -12,10 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "@types/body-parser": "^1.19.2",
+    "@types/express-fileupload": "^1.2.2",
     "axios": "^0.24.0",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "csv": "^6.0.4",
+    "express-fileupload": "^1.4.0",
     "express-handlebars": "^6.0.2",
     "morgan": "^1.10.0",
     "serve-favicon": "^2.5.0"

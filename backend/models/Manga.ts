@@ -18,8 +18,8 @@ export class Manga {
     readonly price: number;
     private comments: Comment[] = [];
 
-    constructor(title: string,  number: number, summary: string = "", chapters: string[], cover: string = "", price: number = 30 + Math.random() * 70) {
-        this.id = number;
+    constructor(id: number, title: string,  number: number, summary: string = "", chapters: string[], cover: string = "", price: number = 30 + Math.random() * 70) {
+        this.id = id;
         this.title = title;
         this.number = number;
         this.summary = summary;

@@ -5,16 +5,21 @@ import path from 'path';
 import { router as mangaRouter } from './routes/mangas';
 import cors from 'cors'
 import bodyParser from 'body-parser';
+import fileUpload from 'express-fileupload'
 const app = express();
 
-app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')));
+app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')))
+app.use(fileUpload({
+    createParentPath: true,
+}))
+
 app.use(cors({
     origin: 'http://localhost:3000'
 }))
-app.use(morgan('tiny'));
-app.use(express.static('./public'));
+app.use(express.static('./public'))
 app.use(bodyParser.json())
-
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(morgan('tiny'))
 
 app.use('/api/mangas', mangaRouter);
 

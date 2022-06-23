@@ -17,18 +17,20 @@ interface MangaSummary {
 }
 
 export class MangaService {
+    private static mangaCounter = 0
     private _mangas: Manga[] = [];
 
     loadMangas() {
         const fileContent = fs.readFileSync(dbPath);
         const records = parse(fileContent, {columns: true});
         for (let record of records) {
+            MangaService.mangaCounter++
             const title = record.title;
             const volumeNumber = Number(record.volumeNumber);
             const cover = `/img/one_piece/${path.basename(record['cover.href'])}`;
             const price = Number(record.price).toFixed(2);
 
-            const manga = new Manga(title, volumeNumber, "", [], cover, Number(price));
+            const manga = new Manga(MangaService.mangaCounter, title, volumeNumber, "", [], cover, Number(price));
             this._mangas.push(manga);
         }
     }
@@ -63,16 +65,22 @@ export class MangaService {
         return this._mangas.find(manga => manga.id === id)
     }
 
+    create(title: string, number: number, price: number, coverPath?: string) {
+        const manga = new Manga(++MangaService.mangaCounter, title, number, "", [], coverPath, price)
+        this._mangas.push(manga)
+        return manga
+    }
+
     delete(id: number) {
         const removed = this._mangas.splice(id, 1);
         return removed.length === 1;
     }
 
-    update(id: number, title: string, number: number, price: number): Manga | undefined {
+    update(id: number, title: string, number: number, price: number, coverPath?: string): Manga | undefined {
         const mangaToUpdate = this._mangas.find(m => m.id === id)
         if(mangaToUpdate) {
-            const mangaUpdated = new Manga(title,
-                 number, "", [], mangaToUpdate.cover.url, price)
+            const mangaUpdated = new Manga(id, title,
+                 number, "", [], coverPath, price)
             this._mangas = this._mangas.map(m => m.id === mangaToUpdate.id ? mangaUpdated : m)    
             return mangaUpdated
         }

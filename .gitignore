@@ -118,3 +118,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+backend/public/img/one_piece/upload/
