@@ -2,6 +2,7 @@
 import { onBeforeMount, ref } from 'vue';
 import { mangaStore } from '../../stores/manga'
 import { imgURL } from '../../mixin/mangaMixing'
+import { useRouter } from 'vue-router';
 
 const props = defineProps<{
     id?: string
@@ -21,6 +22,7 @@ interface Manga {
 const store = mangaStore()
 const manga = ref<Manga>({} as Manga)
 const cover = ref<File>({} as File)
+const router = useRouter()
 
 const alertVisible = ref(false)
 const alertMessage = ref('')
@@ -73,6 +75,7 @@ async function create() {
     showAlert(result !== undefined, "Manga criado com sucesso.", "O manga não foi criado.") 
     if (result){
         manga.value = result
+        router.push({ path: '/admin', hash: `#${manga.value.id}` })
     }
 }
 

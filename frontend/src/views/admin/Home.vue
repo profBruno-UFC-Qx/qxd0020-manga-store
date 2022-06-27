@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed, onBeforeMount, handleError, onMounted } from 'vue'
 import { mangaStore } from '../../stores/manga'
 import { imgURL} from '../../mixin/mangaMixing'
+import { useRoute } from 'vue-router';
 
 const store = mangaStore()
 const mangas = computed(() => store.mangas)
 
 onBeforeMount(async () => store.getMangas())
+
+onMounted(() => {
+  const route = useRoute()
+  if(route.hash){
+    setTimeout(() => location.href = route.hash, 500)
+  }
+})
 
 const selectedManga = ref({id: 0, title: ''})
 
@@ -41,7 +49,7 @@ async function deleteManga() {
         </thead>
         <tbody>
           <tr v-for="manga in mangas" :key="manga.id">
-            <td>{{ manga.id }}</td>
+            <td><a :id="`${manga.id}`">{{ manga.id }}</a></td>
             <td>{{ manga.title }}</td>
             <td><img :src="imgURL(manga.cover.url)" class="img-thumbnail rounded-3 w-25" alt="..."/></td>
             <td>{{ manga.number }}</td>

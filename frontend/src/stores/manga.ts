@@ -65,8 +65,7 @@ export const mangaStore = defineStore('manga', {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                await this.getMangas()
-                return this.mangas.find(m => m.id === data.data.id)
+                return data.data
             } catch(error) {
                 console.log(`${error.status} - ${error.data.error.message}`)
                 return undefined
