@@ -23,8 +23,8 @@ interface Manga {
 }
 
 const store = mangaStore()
-const firstMangaId = computed(() => store.firstMangaId)
-const lastMangaId = computed(() => store.lastMangaId)
+const nextManga = computed(() => store.nextManga(manga.value))
+const previousManga = computed(() => store.previousManga(manga.value))
 
 const route = useRoute()
 const id = route.params.id
@@ -51,8 +51,8 @@ onBeforeRouteUpdate( async (to, from) => {
     </div>
     <div class="row align-items-center" v-else>
         <div class="col-md-2">
-            <router-link :to="{ name: 'verManga', params: { id: Math.max(manga.id - 1, firstMangaId)}}">
-                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === firstMangaId">
+            <router-link :to="{ name: 'verManga', params: { id: previousManga }}">
+                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === previousManga">
                     <i class="bi bi-arrow-left-square-fill"></i>
                 </button>
             </router-link>
@@ -78,8 +78,8 @@ onBeforeRouteUpdate( async (to, from) => {
             </div>
         </div>
         <div class="col-md-2">
-            <router-link :to="{ name: 'verManga', params: { id: Math.min(manga.id + 1, lastMangaId)}}">
-                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === lastMangaId">
+            <router-link :to="{ name: 'verManga', params: { id: nextManga }}">
+                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === nextManga">
                     <i class="bi bi-arrow-right-square-fill"></i>
                 </button>
             </router-link>

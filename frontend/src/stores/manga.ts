@@ -23,11 +23,17 @@ export const mangaStore = defineStore('manga', {
 
     }),
     getters: {
-        lastMangaId(state) {
-            return state.mangas.length === 0 ? 0 : state.mangas[state.mangas.length - 1].id
+        previousManga(state) {
+            return (manga: Manga) => {
+                const currentIndex = state.mangas.findIndex(m => m.id === manga.id)
+                return currentIndex > 0 ? state.mangas[currentIndex - 1].id : manga.id
+            }
         },
-        firstMangaId(state) {
-            return state.mangas.length === 0 ? 0 : state.mangas[0].id
+        nextManga(state) {
+            return (manga: Manga) => {
+                const currentIndex = state.mangas.findIndex(m => m.id === manga.id)
+                return currentIndex < state.mangas.length - 1 ? state.mangas[currentIndex + 1].id : manga.id
+            }
         }
     },
     actions : {
