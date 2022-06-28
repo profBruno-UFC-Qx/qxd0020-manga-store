@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from '../baseConfig'
-import axios, { AxiosError} from 'axios'
+import { getErrorMessage } from '../mixin/errorMessageMixing'
 
 interface Manga {
     id: number,
@@ -20,7 +20,6 @@ interface State {
 export const mangaStore = defineStore('manga', {
     state: (): State => ({
         mangas: [],
-
     }),
     getters: {
         previousManga(state) {
@@ -47,7 +46,7 @@ export const mangaStore = defineStore('manga', {
                 })
                 this.mangas = data.data
             } catch(error) {
-                console.log(`${error.status} - ${error.data.error.message}`)
+                console.log(getErrorMessage(error))
                 return false
             }
         },
@@ -60,7 +59,7 @@ export const mangaStore = defineStore('manga', {
                 })
                 return data.data
             } catch(error) {
-                console.log(`${error.status} - ${error.data.error.message}`)
+                console.log(getErrorMessage(error))
                 return false
             }
         },
@@ -73,7 +72,7 @@ export const mangaStore = defineStore('manga', {
                 })
                 return data.data
             } catch(error) {
-                console.log(`${error.status} - ${error.data.error.message}`)
+                console.log(getErrorMessage(error))
                 return undefined
             }
         },
@@ -86,7 +85,7 @@ export const mangaStore = defineStore('manga', {
                 }
                 return data.data
             } catch(error) {
-                console.log(`${error.status} - ${error.data.error.message}`)
+                console.log(getErrorMessage(error))
                 return false
             }
         },
@@ -101,7 +100,7 @@ export const mangaStore = defineStore('manga', {
                 await this.getMangas()
                 return this.mangas.find(m => m.id === data.data.id)
             } catch(error) {
-                console.log(`${error.status} - ${error.data.error.message}`)
+                console.log(getErrorMessage(error))
                 return undefined
             }
         }
