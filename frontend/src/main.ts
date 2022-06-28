@@ -12,7 +12,7 @@ api.interceptors.response.use(response => response, error => {
             params: { msg: error.response.data.error.message }
         })
     } else {
-        return Promise.reject(error.response)
+        return Promise.reject(error)
     }
 })
 
