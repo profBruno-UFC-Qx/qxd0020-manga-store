@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { AxiosRequestHeaders } from 'axios'
 import { api } from '../baseConfig'
 import { getErrorMessage } from '../mixin/errorMessageMixing'
+import { authenticationHeader } from '../mixin/authenticationMixing'
 
 interface User {
     id: number,
@@ -15,9 +15,7 @@ interface State {
     user: User
 }
 
-const authenticationHeader = (token: string): AxiosRequestHeaders => { 
-    return { "Authorization": `Bearer ${token}` }
-}
+
 
 export const userStore = defineStore('user', {
     state: (): State => ({
@@ -35,6 +33,9 @@ export const userStore = defineStore('user', {
         },
         username(state) {
             return state.user.username
+        },
+        token(state) {
+            return state.user.jwt
         }
     },
     actions : {
@@ -46,12 +47,13 @@ export const userStore = defineStore('user', {
                 })
                 const { user, jwt } = data
                 this.user = {
-                  id: user.id,
-                  username: user.username,
-                  email: user.email,
-                  jwt: jwt,
-                  role: await this.getRoles()
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    jwt: jwt,
+                    role: ""
                 }
+                this.user.role = await this.getRoles()
                 return true
             } catch(error) {
                 console.log(getErrorMessage(error))
@@ -59,12 +61,12 @@ export const userStore = defineStore('user', {
             return false
         },
         async getRoles() {
-            if(this.user.jwt) {
+            if(this.isAuthenticated) {
                 try {
                     const { data } = await api.get('users/me', {
                         headers: authenticationHeader(this.user.jwt),
                         params: {
-                            populate: 'roles'
+                            populate: 'role'
                         }
                     })
                     const { role } = data

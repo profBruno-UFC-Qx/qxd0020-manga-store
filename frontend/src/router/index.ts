@@ -15,17 +15,20 @@ const routes = [
     {
         path: "/admin",
         component: AdminHome,
+        meta: { requiresAdmin: true}
     },
     {
         path: "/admin/manga/",
         component: MangaForm,
         name: 'addManga',
+        meta: { requiresAdmin: true}
     }, 
     {
         path: "/admin/manga/:id",
         component: MangaForm,
         name: 'editManga',
-        props: true
+        props: true,
+        meta: { requiresAdmin: true}
     }, 
     {
         path: "/",

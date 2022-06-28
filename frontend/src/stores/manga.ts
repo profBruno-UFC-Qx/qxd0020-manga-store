@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { api } from '../baseConfig'
+import { userStore } from '../stores/user'
 import { getErrorMessage } from '../mixin/errorMessageMixing'
+import { authenticationHeader } from '../mixin/authenticationMixing'
 
 interface Manga {
     id: number,
@@ -65,9 +67,11 @@ export const mangaStore = defineStore('manga', {
         },
         async create(manga: FormData) {
             try {
+                const store = userStore()
                 const { data } = await api.post(`/mangas/`, manga, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data',
+                        ...authenticationHeader(store.token)
                     }
                 })
                 return data.data
@@ -78,7 +82,10 @@ export const mangaStore = defineStore('manga', {
         },
         async delete(id: number) {
             try {
-                const { data } = await api.delete(`/mangas/${id}`)
+                const store = userStore()
+                const { data } = await api.delete(`/mangas/${id}`, {
+                    headers: authenticationHeader(store.token)
+                })
                 const mangaDeleted = this.mangas.find( manga => manga.id === id)
                 if (mangaDeleted) {
                     this.mangas.splice(this.mangas.indexOf(mangaDeleted), 1)
@@ -92,9 +99,11 @@ export const mangaStore = defineStore('manga', {
         async update(manga: Manga, newCover?: FormData) {
             const { id, title, number, price} = manga
             try {
+                const store = userStore()
                 const { data } = await api.put(`/mangas/${id}`, newCover, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data',
+                        ...authenticationHeader(store.token)
                     }
                 })
                 await this.getMangas()

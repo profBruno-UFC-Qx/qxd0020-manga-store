@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import { api } from './baseConfig'
 import { router } from './router'
+import { userStore } from './stores/user'
 
 
 api.interceptors.response.use(response => response, error => {
@@ -16,8 +17,19 @@ api.interceptors.response.use(response => response, error => {
     }
 })
 
-
 const app = createApp(App)
 app.use(createPinia())
+
+const store = userStore()
+
+router.beforeEach((to, from) => {
+    if(to.meta.requiresAdmin && !store.isAdmin) {
+        return {
+            path: '/login',
+            query: { redirect: to.fullPath }
+        }
+    }
+})
+
 app.use(router)
 app.mount('#app')
