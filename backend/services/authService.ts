@@ -23,7 +23,7 @@ const userDatabase: UserDatabase  = {
             username: "Bruno", 
             email: "brunomateus@gmail.com", 
             password: "$2b$10$jYYgja.jd7AcM.tKfR0axexNBIuLMaICi7G/yl1YWLUF9VHrZ5sIG", 
-            role: ""
+            role: "admin"
         }
     ]
 }
@@ -43,9 +43,8 @@ export class AuthService {
         const user = userDatabase.users.find(u => u.email === identifier)
         if(user) {
             const payload = {
-                id: user.email,
+                identifier: user.email,
                 username: user.username,
-                role: user.role
             }
 
             const signInOptions: SignOptions = {
@@ -55,12 +54,31 @@ export class AuthService {
 
             const token = jwt.sign(payload, SECRET_KEY, signInOptions)
             
-            return { user: {
+            return { 
+                user: {
+                    id: user.id,
+                    identifier: user.email,
+                    username: user.username,
+                    email: user.email,
+                }, 
+                jwt: token
+            }
+        }
+        return { user: undefined, jwt: undefined}
+    }
+
+    userRoles(identifier: string) {
+        const user = userDatabase.users.find(u => u.email === identifier)
+        if(user) {
+            return { 
                 id: user.id,
                 username: user.username,
                 email: user.email,
-            }, jwt: token}
+                role: {
+                    type: user.role
+                } 
+            }
         }
-        return { user: undefined, jwt: undefined}
+        return { user: undefined}
     }
 }
