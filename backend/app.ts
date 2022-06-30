@@ -2,10 +2,11 @@ import express from 'express'
 import morgan from 'morgan';
 import favicon from 'serve-favicon';
 import path from 'path';
-import { router as mangaRouter } from './routes/mangas';
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload'
+import { router as mangaRouter } from './routes/mangas';
+import { router as userRouter } from './routes/user';
 const app = express();
 
 app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')))
@@ -21,7 +22,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(morgan('tiny'))
 
+app.use('/api/', userRouter)
 app.use('/api/mangas', mangaRouter);
+
 
 const PORT = 8080;
 
