@@ -31,7 +31,7 @@ export class OnePieceCrawler extends WebCrawler<Manga> {
             const cover = $(element).find('.info > .capitulos.hide > a.capa > img').first().attr('src');
             
             
-            const manga = new Manga(title, volumeNumber, summary, chapters, cover);
+            const manga = new Manga(i + 1, title, volumeNumber, summary, chapters, cover);
             result.push(manga);
         });
 
