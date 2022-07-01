@@ -22,9 +22,8 @@ router.post('/auth/local', (req, res) => {
 })
 
 router.get('/users/me', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), (req: JWTRequest, res) => {
-    console.log(req.auth)
     if(!req.auth?.identifier) {
-        res.status(401).json({ error: { message: "Missing credentials" }})
+        res.status(401).json({ error: { message: "Missing or invalid credentials" }})
     } else {
         const user = authService.userRoles(req.auth.identifier)
         if(user) {

@@ -5,6 +5,7 @@ import path from 'path';
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload'
+import { authorizathonHandler } from './middleware/authorization';
 import { router as mangaRouter } from './routes/mangas';
 import { router as userRouter } from './routes/user';
 const app = express();
@@ -22,9 +23,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(morgan('tiny'))
 
+
 app.use('/api/', userRouter)
 app.use('/api/mangas', mangaRouter);
-
+app.use(authorizathonHandler)
 
 const PORT = 8080;
 
