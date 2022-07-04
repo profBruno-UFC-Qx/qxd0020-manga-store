@@ -26,7 +26,13 @@ const safeLocalStorage = new SafeLocalStorageService(window.localStorage, encryp
 
 export const userStore = defineStore('user', {
     state: (): State => ({
-        user: {} as User
+        user: {
+            id: Number(safeLocalStorage.getItem('id')),
+            username:  safeLocalStorage.getItem('username'),
+            email: safeLocalStorage.getItem('email'),
+            jwt: safeLocalStorage.getItem('zFJqsz757BscGHsg'),
+            role: safeLocalStorage.getItem('role')
+        }
     }),
     getters: {
         role(state) {
@@ -86,7 +92,8 @@ export const userStore = defineStore('user', {
             return {}
         },
         updateLocalStore() {
-            const { username, email, jwt, role } = this.user
+            const { id, username, email, jwt, role } = this.user
+            safeLocalStorage.setItem('id', id.toString())
             safeLocalStorage.setItem('username', username)
             safeLocalStorage.setItem('email', email),
             safeLocalStorage.setItem('zFJqsz757BscGHsg', jwt),
