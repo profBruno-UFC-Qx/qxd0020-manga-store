@@ -35,16 +35,15 @@ onBeforeMount( async () => {
 })
 
 async function update() {
-    let formData = undefined
+    let formData = new FormData()
     if(cover.value.name) {
-        formData = new FormData()
         formData.append('files.cover', cover.value)
-        formData.append('data', JSON.stringify({
-            title: manga.value.title,
-            number: manga.value.number,
-            price: manga.value.price
-        }))
     }
+    formData.append('data', JSON.stringify({
+        title: manga.value.title,
+        number: manga.value.number,
+        price: manga.value.price
+    }))
     const result = await store.update(manga.value, formData) 
     if(result) {
         manga.value = result

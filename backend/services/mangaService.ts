@@ -80,7 +80,7 @@ export class MangaService {
         const mangaToUpdate = this._mangas.find(m => m.id === id)
         if(mangaToUpdate) {
             const mangaUpdated = new Manga(id, title,
-                 number, "", [], coverPath, price)
+                 number, "", [], coverPath ? coverPath : mangaToUpdate.cover.url, price)
             this._mangas = this._mangas.map(m => m.id === mangaToUpdate.id ? mangaUpdated : m)    
             return mangaUpdated
         }
