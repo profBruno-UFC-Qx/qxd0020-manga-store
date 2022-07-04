@@ -12,7 +12,9 @@ const route = useRoute()
 const validated = ref(false)
 const validationMessage = ref("")
 
-async function authenticate(){
+async function authenticate(event: InputEvent){
+    event.preventDefault()
+    event.stopPropagation()
     validated.value = true
     if(identifier.value && password.value) {
         const result = await store.authenticate(identifier.value, password.value)
@@ -54,10 +56,11 @@ async function authenticate(){
                             A senha é um campo obrigatório.
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <input type="submit" class="float-end btn btn-primary" value="Enviar" @click="authenticate"/>
+                    </div>
                 </form>
-                <div class="mb-3">
-                    <a class="float-end btn btn-primary" @click="authenticate">Login</a>
-                </div>
+                
             </div>
         </div>
     </div>
