@@ -45,6 +45,7 @@ export class AuthService {
             const payload = {
                 identifier: user.email,
                 username: user.username,
+                role: user.role
             }
 
             const signInOptions: SignOptions = {
