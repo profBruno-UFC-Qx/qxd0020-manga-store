@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
+import { v4 as uuid } from 'uuid'
+import Cookie from 'js-cookie'
 import { api } from '../baseConfig'
 import { getErrorMessage } from '../mixin/errorMessageMixing'
 import { authenticationHeader } from '../mixin/authenticationMixing'
+import { SafeLocalStorageService } from '../mixin/safeLocalStorage'
 
 interface User {
     id: number,
@@ -15,7 +18,11 @@ interface State {
     user: User
 }
 
+const cookieName = 'xbcAa-vG.HzbSh5.'
+const encryptionToken = Cookie.get(cookieName) || uuid()
+Cookie.set(cookieName, encryptionToken, { secure: true, expires: 180 })
 
+const safeLocalStorage = new SafeLocalStorageService(window.localStorage, encryptionToken)
 
 export const userStore = defineStore('user', {
     state: (): State => ({
@@ -23,20 +30,20 @@ export const userStore = defineStore('user', {
     }),
     getters: {
         role(state) {
-            return state.user.role
-        },
-        isAuthenticated(state) {
-            return state.user.jwt !== undefined
-        },
-        isAdmin(state) {
-            return state.user.role === "admin"
+            return state.user.role || safeLocalStorage.getItem('role')
         },
         username(state) {
-            return state.user.username
+            return state.user.username || safeLocalStorage.getItem('username')
         },
         token(state) {
-            return state.user.jwt
-        }
+            return state.user.jwt ||  safeLocalStorage.getItem('zFJqsz757BscGHsg')
+        },
+        isAuthenticated() {
+            return this.token !== undefined
+        },
+        isAdmin() {
+            return this.role.toString() === "admin"
+        },
     },
     actions : {
         async authenticate(login: string, password: string) {
@@ -54,6 +61,7 @@ export const userStore = defineStore('user', {
                     role: ""
                 }
                 this.user.role = await this.getRoles()
+                this.updateLocalStore()
                 return true
             } catch(error) {
                 console.log(getErrorMessage(error))
@@ -63,7 +71,7 @@ export const userStore = defineStore('user', {
         async getRoles() {
             if(this.isAuthenticated) {
                 try {
-                    const { data } = await api.get('users/me', {
+                    const { data } = await api.get('/users/me', {
                         headers: authenticationHeader(this.user.jwt),
                         params: {
                             populate: 'role'
@@ -77,8 +85,17 @@ export const userStore = defineStore('user', {
             }
             return {}
         },
+        updateLocalStore() {
+            const { username, email, jwt, role } = this.user
+            safeLocalStorage.setItem('username', username)
+            safeLocalStorage.setItem('email', email),
+            safeLocalStorage.setItem('zFJqsz757BscGHsg', jwt),
+            safeLocalStorage.setItem('role', role)
+        },
         logout() {
             this.user = {} as User
+            safeLocalStorage.clear()
+            Cookie.remove(cookieName)
         }
     }
 })

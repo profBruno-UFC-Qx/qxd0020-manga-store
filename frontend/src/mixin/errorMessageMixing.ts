@@ -1,4 +1,4 @@
-import axios, { AxiosRequestHeaders } from 'axios'
+import axios from 'axios'
 
 export function getErrorMessage(error: unknown): string {
     if (axios.isAxiosError(error)) {
