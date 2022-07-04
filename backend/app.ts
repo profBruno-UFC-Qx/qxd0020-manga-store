@@ -8,6 +8,8 @@ import fileUpload from 'express-fileupload'
 import { authorizathonHandler } from './middleware/authorization';
 import { router as mangaRouter } from './routes/mangas';
 import { router as userRouter } from './routes/user';
+import { connect } from './config/database'
+
 const app = express();
 
 app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')))
@@ -34,7 +36,8 @@ app.get('/', (req, res) => {
     res.redirect('/mangas');
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+    await connect()
     console.log(`Server listening on http://localhost:${PORT} `);
 })
 

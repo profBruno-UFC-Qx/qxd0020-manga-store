@@ -9,12 +9,12 @@ const mangaService = new MangaService();
 
 export const router = express.Router();
 
-router.get('/', (req, res) => {
-    const mangas = mangaService.getAll();
+router.get('/', async (req, res) => {
+    const mangas = await mangaService.getAll();
     res.status(200).json({ data: mangas});
 })
 
-router.post('/', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAdmin, (req, res) => {
+router.post('/', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAdmin, async (req, res) => {
     const { data } = req.body
     const { title, number, price }  = JSON.parse(data)
     
@@ -24,14 +24,13 @@ router.post('/', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAd
             try {
                 const cover = req.files['files.cover'] as UploadedFile;
                 coverPath = `/img/one_piece/upload/up${Date.now().toString()}-${cover.name}`
-                console.log(coverPath)
                 cover.mv(`${__dirname}/../../public/${coverPath}`)
             } catch (err) {
                 res.status(500).json({ error: { message: err }});
             }
         }
         
-        const addedManga = mangaService.create(title, Number(number), Number(price), coverPath)
+        const addedManga = await mangaService.create(title, Number(number), Number(price), coverPath)
         if(addedManga) {
             res.status(200).json({ data: addedManga })
         } else {
@@ -42,9 +41,9 @@ router.post('/', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAd
     }
 });
 
-router.get('/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const manga = mangaService.get(id)
+router.get('/:id', async (req, res) => {
+    const id = req.params.id
+    const manga = await mangaService.get(id)
 
     if(manga) {
         res.status(200).json({ data: manga });    
@@ -54,8 +53,8 @@ router.get('/:id', (req, res) => {
     
 });
 
-router.put('/:id', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAdmin, (req, res) => {
-    const id = Number(req.params.id)
+router.put('/:id', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAdmin, async (req, res) => {
+    const id = req.params.id
     const { data } = req.body
     const { title, number, price }  = JSON.parse(data)
     
@@ -65,13 +64,12 @@ router.put('/:id', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), is
             try {
                 const cover = req.files['files.cover'] as UploadedFile;
                 coverPath = `/img/one_piece/upload/up${Date.now().toString()}-${cover.name}`
-                console.log(coverPath)
                 cover.mv(`${__dirname}/../../public/${coverPath}`)
             } catch (err) {
                 res.status(500).json({ error: { message: err }});
             }
         }
-        const manga = mangaService.update(id, title, Number(number), Number(price), coverPath)
+        const manga = await mangaService.update(id, title, Number(number), Number(price), coverPath)
         if(manga) {
             res.status(200).json({ data: manga });    
         } else {
@@ -82,12 +80,13 @@ router.put('/:id', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), is
     }    
 });
 
-router.delete('/:id', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAdmin, (req, res) => {
-    const id = Number(req.params.id)
-    
-    if (mangaService.delete(id)) {
-        res.redirect('/mangas');
+router.delete('/:id', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), isAdmin, async (req, res) => {
+    const id = req.params.id
+    const manga = await mangaService.delete(id)
+    if (manga) {
+        res.status(200).json({ data: manga });
     } else {
         res.status(404).json({ msg: "Mangá não encontrado!"});
     }
+
 });

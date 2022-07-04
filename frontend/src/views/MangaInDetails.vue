@@ -5,13 +5,13 @@ import { mangaStore } from '../stores/manga'
 import { imgURL } from '../mixin/mangaMixing'
 
 interface Comments {
-    id: number,
+    id: string,
     description: string,
     rating: number
 }
 
 interface Manga {
-    id: number,
+    id: string,
     title: string,
     cover: {
         url: string,
@@ -27,17 +27,17 @@ const nextManga = computed(() => store.nextManga(manga.value))
 const previousManga = computed(() => store.previousManga(manga.value))
 
 const route = useRoute()
-const id = route.params.id
+const id = route.params.id as string
 const manga = ref<Manga>({} as Manga)  
 
-onBeforeMount( async () => {
-    manga.value = await store.get(Number(id))
+onBeforeMount(async () => {
+    manga.value = await store.get(id)
 })
 
 
 onBeforeRouteUpdate( async (to, from) => {
     if (to.params.id !== from.params.id) {
-        manga.value = await store.get(Number(to.params.id))
+        manga.value = await store.get(to.params.id as string)
     } 
 })
 

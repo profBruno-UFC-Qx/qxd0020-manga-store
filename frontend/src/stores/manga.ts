@@ -5,7 +5,7 @@ import { getErrorMessage } from '../mixin/errorMessageMixing'
 import { authenticationHeader } from '../mixin/authenticationMixing'
 
 interface Manga {
-    id: number,
+    id: string,
     title: string,
     cover: {
      url: string,
@@ -52,7 +52,7 @@ export const mangaStore = defineStore('manga', {
                 return false
             }
         },
-        async get(id: number) {
+        async get(id: string) {
             try {
                 const { data } = await api.get(`/mangas/${id}`, {
                     params: {
@@ -80,7 +80,7 @@ export const mangaStore = defineStore('manga', {
                 return undefined
             }
         },
-        async delete(id: number) {
+        async delete(id: string) {
             try {
                 const store = userStore()
                 const { data } = await api.delete(`/mangas/${id}`, {
@@ -96,8 +96,7 @@ export const mangaStore = defineStore('manga', {
                 return false
             }
         },
-        async update(manga: Manga, newCover?: FormData) {
-            const { id, title, number, price} = manga
+        async update(id: string, newCover?: FormData) {
             try {
                 const store = userStore()
                 const { data } = await api.put(`/mangas/${id}`, newCover, {

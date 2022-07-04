@@ -2,7 +2,7 @@
 import { imgURL} from '../mixin/mangaMixing'
 
 const props = defineProps<{
-    id: number,
+    id: string,
     cover: string
     title: string,
     number: number,

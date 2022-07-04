@@ -9,7 +9,7 @@ const props = defineProps<{
 }>()
 
 interface Manga {
-    id: number,
+    id: string,
     title: string,
     cover: {
         url: string,
@@ -30,22 +30,21 @@ const alertFeedback = ref(false)
 
 onBeforeMount( async () => {
     if(props.id) {
-        manga.value = await store.get(Number(props.id))
+        manga.value = await store.get(props.id)
     }
 })
 
 async function update() {
-    let formData = undefined
+    let formData = new FormData()
     if(cover.value.name) {
-        formData = new FormData()
         formData.append('files.cover', cover.value)
-        formData.append('data', JSON.stringify({
+    }
+    formData.append('data', JSON.stringify({
             title: manga.value.title,
             number: manga.value.number,
             price: manga.value.price
-        }))
-    }
-    const result = await store.update(manga.value, formData) 
+    }))
+    const result = await store.update(manga.value.id, formData) 
     if(result) {
         manga.value = result
     }
