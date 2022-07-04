@@ -39,7 +39,7 @@ async function deleteManga() {
       <table class="table table-striped">
         <thead>
           <tr>
-          <th>Id</th>
+          <th>#</th>
           <th>Title</th>
           <th>Cover</th>
           <th>Number</th>
@@ -48,8 +48,8 @@ async function deleteManga() {
         </tr>
         </thead>
         <tbody>
-          <tr v-for="manga in mangas" :key="manga.id">
-            <td><a :id="`${manga.id}`">{{ manga.id }}</a></td>
+          <tr v-for="(manga, index) in mangas" :key="manga.id">
+            <td><a :id="`${manga.id}`">{{ index + 1 }}</a></td>
             <td>{{ manga.title }}</td>
             <td><img :src="imgURL(manga.cover.url)" class="img-thumbnail rounded-3 w-25" alt="..."/></td>
             <td>{{ manga.number }}</td>
