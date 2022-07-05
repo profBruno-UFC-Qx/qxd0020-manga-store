@@ -37,6 +37,9 @@
       "relation": "oneToMany",
       "target": "api::comment.comment",
       "mappedBy": "manga"
+    },
+    "summary": {
+      "type": "text"
     }
   }
 }
