@@ -10,7 +10,7 @@ export const SECRET_KEY = process.env.SECRET_KEY as string
 export class AuthService {
     private repository: Repository<User>
     constructor(){
-            this.repository = AppDataSource.getRepository(User)
+        this.repository = AppDataSource.getRepository(User)
     }
 
     async isValidCredential(identifier: string, password: string) {

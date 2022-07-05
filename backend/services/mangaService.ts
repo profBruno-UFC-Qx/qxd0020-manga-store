@@ -1,90 +1,65 @@
-import { Manga } from "../models/Manga";
-import { parse } from 'csv-parse/sync';
-import * as fs from "fs";
-import path from "path";
-
-const dbPath = path.join(__dirname, '../../db/mangas.csv');
-
-interface MangaSummary {
-    id: number,
-    title: string,
-    summary: string,
-    cover: {
-        url: string
-    },
-    number: number,
-    price: number
-}
+import { Manga, Cover } from "../entities/Manga";
+import { AppDataSource } from '../db/dataSource'
+import { Repository } from "typeorm";
 
 export class MangaService {
-    private static mangaCounter = 0
-    private _mangas: Manga[] = [];
+    private repository: Repository<Manga>
 
-    loadMangas() {
-        const fileContent = fs.readFileSync(dbPath);
-        const records = parse(fileContent, {columns: true});
-        for (let record of records) {
-            MangaService.mangaCounter++
-            const title = record.title;
-            const volumeNumber = Number(record.volumeNumber);
-            const cover = `/img/one_piece/${path.basename(record['cover.href'])}`;
-            const price = Number(record.price).toFixed(2);
-
-            const manga = new Manga(MangaService.mangaCounter, title, volumeNumber, "", [], cover, Number(price));
-            this._mangas.push(manga);
-        }
+    constructor(){
+        this.repository = AppDataSource.getRepository(Manga)
     }
 
-    getAll(): MangaSummary[]{
-        const result: MangaSummary[] = []
-
-        if(this._mangas.length == 0) {
-            this.loadMangas();
-        }
-
-        for (let manga of this._mangas) {
-
-            const {id, title, cover, number, price} = manga
-
-            result.push({
-                id: id,
-                title: title,
-                summary: "",
-                cover: cover,
-                number: number,
-                price: price
-            })
-        }
-        return result;
+    async getAll(): Promise<Manga[]> {
+        return await this.repository.find({ 
+            relations: {
+                cover: true,
+            }
+        })
     }
 
-    get(id: number): Manga | undefined {
-        if(this._mangas.length == 0) {
-            this.loadMangas();
+    async get(id: number): Promise<Manga | null> {
+       return await this.repository.findOne({
+        relations: {
+            cover: true,
+            comments: true
+        },
+        where: {
+            id: id
         }
-        return this._mangas.find(manga => manga.id === id)
+       })
     }
 
-    create(title: string, number: number, price: number, coverPath?: string) {
-        const manga = new Manga(++MangaService.mangaCounter, title, number, "", [], coverPath, price)
-        this._mangas.push(manga)
+    async create(title: string, number: number, price: number, coverPath?: string): Promise<Manga> {
+        const manga = this.repository.create({
+            title: title,
+            number: number,
+            price: price,
+            cover: {
+                url: coverPath,
+                alternativeText: `${number} - ${title}`
+            }
+        })
+        return await this.repository.save(manga)
+    }
+
+    async delete(id: number): Promise<Manga | null> {
+        const manga = await this.repository.findOneBy({ id : id })
+        return manga ? await this.repository.remove(manga): null
+    }
+
+    async update(id: number, title: string, number: number, price: number, coverPath?: string): Promise<Manga | null> {
+        let manga = await this.get(id)
+        if(manga) {
+            manga.title = title
+            manga.number = number
+            manga.price = price
+            if(coverPath) {
+                manga.cover.url = coverPath
+                manga.cover.alternativeText = `${number} - ${title}`
+            }
+            manga = await this.repository.save(manga)
+        }
         return manga
-    }
-
-    delete(id: number) {
-        const removed = this._mangas.splice(id, 1);
-        return removed.length === 1;
-    }
-
-    update(id: number, title: string, number: number, price: number, coverPath?: string): Manga | undefined {
-        const mangaToUpdate = this._mangas.find(m => m.id === id)
-        if(mangaToUpdate) {
-            const mangaUpdated = new Manga(id, title,
-                 number, "", [], coverPath ? coverPath : mangaToUpdate.cover.url, price)
-            this._mangas = this._mangas.map(m => m.id === mangaToUpdate.id ? mangaUpdated : m)    
-            return mangaUpdated
-        }
-        return mangaToUpdate
     }
 }
 

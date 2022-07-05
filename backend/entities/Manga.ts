@@ -1,24 +1,59 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, ManyToOne, JoinColumn } from "typeorm"
 
-@Entity("mangas")
+@Entity()
+export class Cover {
+
+    @PrimaryGeneratedColumn()
+    id!: number
+
+    @Column()
+    url: string = ""
+
+    @Column()
+    alternativeText: string = ""
+}
+
+@Entity()
 export class Manga {
 
     @PrimaryGeneratedColumn()
-    id: number
+    id!: number
 
     @Column()
-    title: string
+    title!: string
 
     @Column()
-    number: number
+    number!: number
+
+    @Column({nullable: true, default: ""})
+    summary: string = ""
 
     @Column()
-    summary: string
+    price!: number
+
+    @OneToOne(() => Cover, { nullable: true, cascade: true, onDelete: "CASCADE" })
+    @JoinColumn()
+    cover!: Cover
+
+    @OneToMany(() => Comment, (comment) => comment.manga)
+    @JoinColumn()
+    comments?: Comment[]
+
+}
+
+
+@Entity()
+export class Comment {
+    @PrimaryGeneratedColumn()
+    id!: number
 
     @Column()
-    chapters: string[]
+    rating: number = 0;
 
     @Column()
-    price: number
+    description!: string
 
+    @ManyToOne(() => Manga, (manga) => manga.comments)
+    @JoinColumn()
+    manga!: Manga
 }

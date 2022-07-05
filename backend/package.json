@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon dist/app.js"
+    "start": "nodemon dist/app.js",
+    "seed": "typeorm migration:run -d dist/db/datasource.js"
   },
   "keywords": [],
   "author": "",
