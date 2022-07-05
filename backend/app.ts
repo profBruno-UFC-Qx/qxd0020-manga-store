@@ -13,7 +13,7 @@ import { router as userRouter } from './routes/user';
 
 const app = express();
 
-app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')))
+app.use(favicon(path.join(__dirname, 'public', 'favicon.png')))
 app.use(fileUpload({
     createParentPath: true,
 }))
