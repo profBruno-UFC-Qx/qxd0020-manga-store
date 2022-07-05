@@ -5,9 +5,12 @@ import path from 'path';
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload'
+import "reflect-metadata"
+import { AppDataSource } from './db/dataSource'
 import { authorizathonHandler } from './middleware/authorization';
 import { router as mangaRouter } from './routes/mangas';
 import { router as userRouter } from './routes/user';
+
 const app = express();
 
 app.use(favicon(path.join(__dirname, '../', 'public', 'favicon.png')))
@@ -34,7 +37,9 @@ app.get('/', (req, res) => {
     res.redirect('/mangas');
 });
 
-app.listen(PORT, () => {
+
+app.listen(PORT, async () => {
+    const connection = await AppDataSource.initialize()
     console.log(`Server listening on http://localhost:${PORT} `);
 })
 

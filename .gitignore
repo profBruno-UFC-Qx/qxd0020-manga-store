@@ -120,3 +120,5 @@ dist
 .pnp.*
 
 backend/public/img/one_piece/upload/
+
+*.sqlite

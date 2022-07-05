@@ -7,10 +7,10 @@ const authService = new AuthService();
 
 export const router = express.Router();
 
-router.post('/auth/local', (req, res) => {
+router.post('/auth/local', async (req, res) => {
     const { identifier, password } = req.body
-    if(authService.isValidCredential(identifier, password)) {
-        const { user, jwt } = authService.generateAuthToken(identifier)
+    if(await authService.isValidCredential(identifier, password)) {
+        const { user, jwt } = await authService.generateAuthToken(identifier)
         if(user && jwt) {
             res.status(200).json({ user: user, jwt: jwt})
         } else {
@@ -21,11 +21,11 @@ router.post('/auth/local', (req, res) => {
     }
 })
 
-router.get('/users/me', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), (req: JWTRequest, res) => {
+router.get('/users/me', expressjwt({ secret: SECRET_KEY, algorithms: ["HS256"] }), async (req: JWTRequest, res) => {
     if(!req.auth?.identifier) {
         res.status(401).json({ error: { message: "Missing or invalid credentials" }})
     } else {
-        const user = authService.userRoles(req.auth.identifier)
+        const user = await authService.userRoles(req.auth.identifier)
         if(user) {
             res.status(200).json(user)
         } else {

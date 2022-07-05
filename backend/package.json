@@ -23,7 +23,10 @@
     "express-jwt": "^7.7.5",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
-    "serve-favicon": "^2.5.0"
+    "reflect-metadata": "^0.1.13",
+    "serve-favicon": "^2.5.0",
+    "sqlite3": "^5.0.8",
+    "typeorm": "^0.3.7"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

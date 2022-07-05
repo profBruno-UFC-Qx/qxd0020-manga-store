@@ -1,46 +1,27 @@
+import 'dotenv/config'
 import bcrypt from 'bcrypt'
 import jwt, { SignOptions } from 'jsonwebtoken'
-import 'dotenv/config'
+import { Repository } from 'typeorm'
+import { User } from '../entities/User'
+import { AppDataSource } from '../db/dataSource'
 
 export const SECRET_KEY = process.env.SECRET_KEY as string
 
-interface User {
-    id: number,
-    username: string,
-    email: string,
-    password: string,
-    role: string
-}
-
-interface UserDatabase {
-    users: User[]
-}
-
-const userDatabase: UserDatabase  = {
-    users: [
-        {
-            id: 1, 
-            username: "Bruno", 
-            email: "brunomateus@gmail.com", 
-            password: "$2b$10$jYYgja.jd7AcM.tKfR0axexNBIuLMaICi7G/yl1YWLUF9VHrZ5sIG", 
-            role: "admin"
-        }
-    ]
-}
-
 export class AuthService {
+    private repository: Repository<User>
     constructor(){
+            this.repository = AppDataSource.getRepository(User)
     }
 
-    isValidCredential(identifier: string, password: string) {
-        const user = userDatabase.users.find(u => u.email === identifier)
+    async isValidCredential(identifier: string, password: string) {
+        const user = await this.repository.findOneBy({ email: identifier })
         if(user) {
             return bcrypt.compareSync(password , user.password)
         }
     }
 
-    generateAuthToken(identifier: string) {
-        const user = userDatabase.users.find(u => u.email === identifier)
+    async generateAuthToken(identifier: string) {
+        const user = await this.repository.findOneBy({ email: identifier })
         if(user) {
             const payload = {
                 identifier: user.email,
@@ -68,8 +49,8 @@ export class AuthService {
         return { user: undefined, jwt: undefined}
     }
 
-    userRoles(identifier: string) {
-        const user = userDatabase.users.find(u => u.email === identifier)
+    async userRoles(identifier: string) {
+        const user = await this.repository.findOneBy({ email: identifier })
         if(user) {
             return { 
                 id: user.id,
