@@ -3,7 +3,7 @@ import { parse } from 'csv-parse/sync';
 import * as fs from "fs";
 import path from "path";
 
-const dbPath = path.join(__dirname, '../../../db/mangas.csv')
+const dbPath = path.join(__dirname, '../../../../webcrawler/output/mangas.csv')
 
 export class Initialization1656988250329 implements MigrationInterface {
 
@@ -12,9 +12,10 @@ export class Initialization1656988250329 implements MigrationInterface {
         const records = parse(fileContent, {columns: true});
         for (let record of records) {
             const title = record.title;
-            const volumeNumber = Number(record.volumeNumber);
-            const cover = `/img/one_piece/${path.basename(record['cover.href'])}`;
-            const price = Number(record.price).toFixed(2);
+            const volumeNumber = Number(record.number);
+            const cover = record.cover;
+            const price = record.price
+            const summary = record.summary || ""
 
             await queryRunner.query(
                 `INSERT INTO cover 
@@ -23,7 +24,7 @@ export class Initialization1656988250329 implements MigrationInterface {
 
             await queryRunner.query(
                 `INSERT INTO manga 
-                ("title", "number", price, coverId) VALUES ("${title}", ${volumeNumber}, ${price}, ${volumeNumber})`,
+                ("title", "number", "price", "coverId", "summary") VALUES ("${title}", ${volumeNumber}, ${price}, ${volumeNumber}, '${summary}')`,
             )
         }
 
