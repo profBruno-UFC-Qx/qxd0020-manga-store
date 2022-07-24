@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount, onMounted } from 'vue'
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { mangaStore } from '../../stores/manga'
 import { imgURL} from '../../mixin/mangaMixing'
-import Pagination from '../../components/Pagination.vue'
+import PaginatedContainer from '../../components/PaginatedContainer.vue'
 
 const store = mangaStore()
 const mangas = computed(() => store.mangas)
 const pagination = computed(() => store.pagination)
+
 
 onBeforeMount(async () => store.getMangas())
 
@@ -42,15 +43,14 @@ async function deleteManga() {
 </script>
 
 <template>
+  <PaginatedContainer
+    :page="pagination.page"
+    :page-count="pagination.pageCount"
+    :page-size="pagination?.pageSize"
+    :total="pagination?.total"
+  >
     <router-link :to="{ name: 'addManga'}" class="btn btn-success"><i class="bi bi-plus"></i>Add</router-link>
-
-  <Pagination
-   :page="pagination.page"
-   :page-count="pagination.pageCount"
-   :page-size="pagination?.pageSize"
-   :total="pagination?.total"
-  ></Pagination>
-
+    
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       <table class="table table-striped">
         <thead>
@@ -77,22 +77,22 @@ async function deleteManga() {
         </tbody>
       </table>
   </div>
-
+  </PaginatedContainer>
   <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Confirmação</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Você tem certeza que deseja deletar o manga <strong>{{ selectedManga.title }}</strong>?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="deleteManga">Yes</button>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Confirmação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Você tem certeza que deseja deletar o manga <strong>{{ selectedManga.title }}</strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="deleteManga">Yes</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
