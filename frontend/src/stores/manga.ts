@@ -15,13 +15,29 @@ interface Manga {
     price: number
 }
 
+interface Pagination {
+    page: number,
+    pageSize: number,
+    pageCount: number,
+    total: number
+}
+
 interface State {
     mangas: Manga[],
+    pagination: Pagination
 }
+
+
 
 export const mangaStore = defineStore('manga', {
     state: (): State => ({
         mangas: [],
+        pagination: {
+            page: 0,
+            pageCount: 0,
+            pageSize: 0,
+            total: 0
+        }
     }),
     getters: {
         previousManga(state) {
@@ -38,15 +54,16 @@ export const mangaStore = defineStore('manga', {
         }
     },
     actions : {
-        async getMangas() {
+        async getMangas(page: number = 1) {
             try {
                 const { data } = await api.get('/mangas', {
                     params: {
                         populate: "cover",
-                        "pagination[limit]": 100
+                        "pagination[page]": page
                     }
                 })
                 this.mangas = data.data
+                this.pagination = data.meta.pagination
             } catch(error) {
                 console.log(getErrorMessage(error))
                 return false

@@ -15,6 +15,7 @@ const routes = [
     {
         path: "/admin",
         component: AdminHome,
+        name: "adminHome",
         meta: { requiresAdmin: true}
     },
     {
@@ -33,6 +34,7 @@ const routes = [
     {
         path: "/",
         component: Home,
+        name: "home",
         alias: '/mangas'
     }, 
     {

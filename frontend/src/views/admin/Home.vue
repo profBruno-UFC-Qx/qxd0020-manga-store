@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeMount, handleError, onMounted } from 'vue'
+import { ref, computed, onBeforeMount, onMounted } from 'vue'
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { mangaStore } from '../../stores/manga'
 import { imgURL} from '../../mixin/mangaMixing'
-import { useRoute } from 'vue-router';
+import Pagination from '../../components/Pagination.vue'
 
 const store = mangaStore()
 const mangas = computed(() => store.mangas)
+const pagination = computed(() => store.pagination)
 
 onBeforeMount(async () => store.getMangas())
+
+onBeforeRouteUpdate(async (to, from) => {
+    if (to.query.page !== from.query.page) { 
+      await store.getMangas(Number(to.query.page))
+    } 
+})
 
 onMounted(() => {
   const route = useRoute()
@@ -35,6 +43,14 @@ async function deleteManga() {
 
 <template>
     <router-link :to="{ name: 'addManga'}" class="btn btn-success"><i class="bi bi-plus"></i>Add</router-link>
+
+  <Pagination
+   :page="pagination.page"
+   :page-count="pagination.pageCount"
+   :page-size="pagination?.pageSize"
+   :total="pagination?.total"
+  ></Pagination>
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
       <table class="table table-striped">
         <thead>
@@ -49,7 +65,7 @@ async function deleteManga() {
         </thead>
         <tbody>
           <tr v-for="(manga, index) in mangas" :key="manga.id">
-            <td><a :id="`${manga.id}`">{{ index + 1 }}</a></td>
+            <td><a :id="`${manga.number}`">{{ manga.number }}</a></td>
             <td>{{ manga.title }}</td>
             <td><img :src="imgURL(manga.cover.url)" class="img-thumbnail rounded-3 w-25" alt="..."/></td>
             <td>{{ manga.number }}</td>
