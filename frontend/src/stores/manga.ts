@@ -115,7 +115,7 @@ export const mangaStore = defineStore('manga', {
             }
         },
         async update(manga: Manga, newCover?: FormData) {
-            const { id, title, number, price} = manga
+            const { id } = manga
             try {
                 const store = userStore()
                 const { data } = await api.put(`/mangas/${id}`, newCover, {
@@ -124,8 +124,9 @@ export const mangaStore = defineStore('manga', {
                         ...authenticationHeader(store.token)
                     }
                 })
-                await this.getMangas()
-                return this.mangas.find(m => m.id === data.data.id)
+                const mangaUpdated = await this.get(id)
+                this.mangas = this.mangas.map(m => m.id == mangaUpdated.id ? mangaUpdated : m )
+                return mangaUpdated
             } catch(error) {
                 console.log(getErrorMessage(error))
                 return undefined
