@@ -59,6 +59,7 @@ export const mangaStore = defineStore('manga', {
                 const { data } = await api.get('/mangas', {
                     params: {
                         populate: "cover",
+                        "pagination[pageSize]": 24,
                         "pagination[page]": page
                     }
                 })

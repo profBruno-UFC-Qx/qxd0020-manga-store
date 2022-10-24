@@ -12,7 +12,7 @@ const props = defineProps<{
 
 </script>
 <template>
-    <div class="col">
+    <div class="col-lg-3 col-md-4 col-sm-1">
         <router-link :to="`/mangas/${id}`" class="text-decoration-none text-reset">
             <div class="card shadow-sm">
                 <img :src="imgURL(cover)" class="card-img-top" alt="...">
