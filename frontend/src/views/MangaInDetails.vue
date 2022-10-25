@@ -3,6 +3,7 @@ import { onBeforeMount, ref, computed } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { mangaStore } from '../stores/manga'
 import { imgURL } from '../mixin/mangaMixing'
+import CommentsContainer from '../components/Comment/Container.vue'
 
 interface Comments {
     id: number,
@@ -85,28 +86,7 @@ onBeforeRouteUpdate( async (to, from) => {
             </router-link>
         </div>
         <div class="row">
-            <div class="col-12">
-                <h4>Avaliações</h4>
-                <hr>
-                <template v-if="manga?.comments.length">
-                    <div class="card m-4 text-start" v-for="comentario in manga?.comments">
-                        <div class="card-body">
-                            <h6 class="card-subtitle">
-                                <template v-for="nota in 5">
-                                    <i class="bi bi-star-fill text-warning" v-if="nota <= comentario.rating"></i>
-                                    <i class="bi bi-star text-warning" v-else></i>
-                                </template>
-                            </h6>
-                            <p class="card-text">
-                                {{comentario.description}}
-                            </p>
-                        </div>
-                    </div>    
-                </template>
-                <section v-else>
-                    Nenhum comentário feito até o momento
-                </section>   
-            </div> 
+            <CommentsContainer class="col-12" :comments="manga.comments"></CommentsContainer>
         </div>
     </div>
 </template>
