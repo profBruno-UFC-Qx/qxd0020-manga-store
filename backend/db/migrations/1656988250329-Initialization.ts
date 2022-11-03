@@ -3,7 +3,7 @@ import { parse } from 'csv-parse/sync';
 import * as fs from "fs";
 import path from "path";
 
-const dbPath = path.join(__dirname, '../../../../webcrawler/output/mangas.csv')
+const dbPath = path.join(__dirname, '../../../webcrawler/output/mangas.csv')
 
 export class Initialization1656988250329 implements MigrationInterface {
 
