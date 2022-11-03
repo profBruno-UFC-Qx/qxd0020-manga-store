@@ -2,6 +2,8 @@
 
 Uma loja online destinada a vendas de Mangás.
 
+Para executar este projeto siga os passos descritos no arquivo [passo-a-passo](passo-a-passo.md)
+
 ## Membros da equipe
 
 Bruno Góis Mateus, 2142315, Engenharia de Software
