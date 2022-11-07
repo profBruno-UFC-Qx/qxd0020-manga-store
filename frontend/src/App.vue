@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { userStore} from './stores/user'
+import { useUserStore} from './stores/user'
 
-const store = userStore()
-const username = computed(() => store.username)
+const userStore = useUserStore()
+const username = computed(() => userStore.username)
 
 function logout() {
-  store.logout()
+  userStore.logout()
 }
 
 </script>

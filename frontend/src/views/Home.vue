@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { computed, onBeforeMount } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
-import { mangaStore } from '../stores/manga'
+import { useMangaStore } from '../stores/manga'
 import MangaCard from '../components/MangaCard.vue'
 import PaginatedContainer from '../components/PaginatedContainer.vue'
 
-const store = mangaStore()
-const mangas = computed(() => store.mangas)
-const pagination = computed(() => store.pagination)
+const mangaStore = useMangaStore()
+const mangas = computed(() => mangaStore.mangas)
+const pagination = computed(() => mangaStore.pagination)
 
-onBeforeMount(async () => store.getMangas())
+onBeforeMount(async () => mangaStore.all())
 
 onBeforeRouteUpdate( async (to, from) => {
     if (to.query.page !== from.query.page) { 
-      await store.getMangas(Number(to.query.page))
+      await mangaStore.all(Number(to.query.page))
     } 
 })
 

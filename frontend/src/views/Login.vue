@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { userStore } from '../stores/user'
+import { useUserStore } from '../stores/user'
 import { useRouter, useRoute } from 'vue-router';
 
 const identifier = ref("")
 const password = ref("")
-const store = userStore()
+const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -17,11 +17,11 @@ async function authenticate(event: InputEvent){
     event.stopPropagation()
     validated.value = true
     if(identifier.value && password.value) {
-        const result = await store.authenticate(identifier.value, password.value)
+        const result = await userStore.authenticate(identifier.value, password.value)
         if(result) {
             validationMessage.value = ""
             let redirect = "/"
-            if(store.isAdmin) {
+            if(userStore.isAdmin) {
                 redirect = route.query.redirect ? route.query.redirect as string: "/admin"
             }
             router.push(redirect)

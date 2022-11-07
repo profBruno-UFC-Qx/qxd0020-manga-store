@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount, onMounted } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { mangaStore } from '../../stores/manga'
+import { useMangaStore } from '../../stores/manga'
 import { imgURL} from '../../mixin/mangaMixing'
 import PaginatedContainer from '../../components/PaginatedContainer.vue'
 
-const store = mangaStore()
-const mangas = computed(() => store.mangas)
-const pagination = computed(() => store.pagination)
+const mangaStore = useMangaStore()
+const mangas = computed(() => mangaStore.mangas)
+const pagination = computed(() => mangaStore.pagination)
 
 
-onBeforeMount(async () => store.getMangas())
+onBeforeMount(async () => mangaStore.all())
 
 onBeforeRouteUpdate(async (to, from) => {
     if (to.query.page !== from.query.page) { 
-      await store.getMangas(Number(to.query.page))
+      await mangaStore.all(Number(to.query.page))
     } 
 })
 
@@ -33,7 +33,7 @@ function askConfirmation(id: number, title: string) {
 }
 
 async function deleteManga() {
-  if (await store.delete(selectedManga.value.id)) {
+  if (await mangaStore.delete(selectedManga.value.id)) {
     selectedManga.value = { id: 0, title: ''}  
   }
   

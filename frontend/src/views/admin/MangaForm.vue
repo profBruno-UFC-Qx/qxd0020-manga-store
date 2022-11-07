@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { mangaStore } from '../../stores/manga'
+import { useMangaStore } from '../../stores/manga'
 import { imgURL } from '../../mixin/mangaMixing'
 import { useRouter } from 'vue-router';
 
@@ -19,7 +19,7 @@ interface Manga {
     price: number
 }
 
-const store = mangaStore()
+const mangaStore = useMangaStore()
 const manga = ref<Manga>({} as Manga)
 const cover = ref<File>({} as File)
 const router = useRouter()
@@ -30,7 +30,7 @@ const alertFeedback = ref(false)
 
 onBeforeMount( async () => {
     if(props.id) {
-        manga.value = await store.get(Number(props.id))
+        manga.value = await mangaStore.get(Number(props.id))
     }
 })
 
@@ -44,7 +44,7 @@ async function update() {
         number: manga.value.number,
         price: manga.value.price
     }))
-    const result = await store.update(manga.value, formData) 
+    const result = await mangaStore.update(manga.value, formData) 
     if(result) {
         manga.value = result
     }
@@ -70,7 +70,7 @@ async function create() {
     }))
 
 
-    const result = await store.create(formData)
+    const result = await mangaStore.create(formData)
     showAlert(result !== undefined, "Manga criado com sucesso.", "O manga não foi criado.") 
     if (result){
         manga.value = result

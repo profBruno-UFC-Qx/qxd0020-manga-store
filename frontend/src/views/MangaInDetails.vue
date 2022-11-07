@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, computed } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { mangaStore } from '../stores/manga'
+import { useMangaStore } from '../stores/manga'
 import { imgURL } from '../mixin/mangaMixing'
 import CommentsContainer from '../components/Comment/Container.vue'
 
@@ -23,22 +23,22 @@ interface Manga {
     price: number
 }
 
-const store = mangaStore()
-const nextManga = computed(() => store.nextManga(manga.value))
-const previousManga = computed(() => store.previousManga(manga.value))
+const mangaStore = useMangaStore()
+const nextManga = computed(() => mangaStore.nextManga(manga.value))
+const previousManga = computed(() => mangaStore.previousManga(manga.value))
 
 const route = useRoute()
 const id = route.params.id
 const manga = ref<Manga>({} as Manga)  
 
 onBeforeMount( async () => {
-    manga.value = await store.get(Number(id))
+    manga.value = await mangaStore.get(Number(id))
 })
 
 
 onBeforeRouteUpdate( async (to, from) => {
     if (to.params.id !== from.params.id) {
-        manga.value = await store.get(Number(to.params.id))
+        manga.value = await mangaStore.get(Number(to.params.id))
     } 
 })
 
