@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { imgURL} from '../mixin/mangaMixing'
 
-const props = defineProps<{
+defineProps<{
     id: number,
     cover: string
     title: string,

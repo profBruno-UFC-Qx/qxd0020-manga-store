@@ -12,7 +12,7 @@ const route = useRoute()
 const validated = ref(false)
 const validationMessage = ref("")
 
-async function authenticate(event: InputEvent){
+async function authenticate(event: MouseEvent){
     event.preventDefault()
     event.stopPropagation()
     validated.value = true

@@ -8,7 +8,7 @@ interface Pagination {
     total: number,
 }
 
-const props = defineProps<Pagination>()
+defineProps<Pagination>()
 const route = useRoute()
 const url = route.name?.toString()
 

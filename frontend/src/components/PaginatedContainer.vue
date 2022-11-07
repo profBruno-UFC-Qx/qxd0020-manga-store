@@ -7,24 +7,24 @@ interface Pagination {
     pageCount: number,
     total: number,
 }
-const props = defineProps<Pagination>()
+defineProps<Pagination>()
 
 </script>
 
 <template>
  <Pagination
-   :page="props.page"
-   :page-count="props.pageCount"
-   :page-size="props.pageSize"
-   :total="props.total"
+   :page="page"
+   :page-count="pageCount"
+   :page-size="pageSize"
+   :total="total"
   ></Pagination>
 
   <slot></slot>
 
   <Pagination
-   :page="props.page"
-   :page-count="props.pageCount"
-   :page-size="props.pageSize"
-   :total="props.total"
+   :page="page"
+   :page-count="pageCount"
+   :page-size="pageSize"
+   :total="total"
   ></Pagination>
 </template>
