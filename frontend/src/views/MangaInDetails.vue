@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, computed } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { useMangaStore } from '../stores/manga'
 import { imgURL } from '../mixin/mangaMixing'
+import { isApplicationError } from '../mixin/errorMessageMixing'
 import CommentsContainer from '../components/Comment/Container.vue'
 
 interface Comments {
@@ -26,17 +27,29 @@ interface Manga {
 const mangaStore = useMangaStore()
 
 const route = useRoute()
-const id = route.params.id
+const id = Number(route.params.id)
 const manga = ref<Manga>({} as Manga)  
+const loading = ref(true)
+const errorMessage = ref('')
+
+async function getMangaAndUpdate(id: number) {
+    const result = await mangaStore.get(id)
+    if (isApplicationError(result)) {
+        errorMessage.value = result.message
+    } else {
+        manga.value = result
+    }
+    loading.value = false 
+}
 
 onBeforeMount( async () => {
-    manga.value = await mangaStore.get(Number(id))
+    getMangaAndUpdate(id)
 })
 
 
 onBeforeRouteUpdate( async (to, from) => {
     if (to.params.id !== from.params.id) {
-        manga.value = await mangaStore.get(Number(to.params.id))
+        getMangaAndUpdate(id)
     } 
 })
 

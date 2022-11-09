@@ -6,7 +6,11 @@ export interface ApplicationError {
   details?: string,
 }
 
-export function getAppError(error: unknown): ApplicationError {
+export function isApplicationError(error: any): error is ApplicationError {
+  return error.name !== undefined && error.message !== undefined
+}
+
+export function getAppError(error: any): ApplicationError {
     if (axios.isAxiosError(error)) {
       if(error.response) {
         const requestError = error.response.data.error

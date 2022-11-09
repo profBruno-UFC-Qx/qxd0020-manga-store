@@ -5,6 +5,12 @@ import { useUserStore } from '../stores/user'
 import { ApplicationError, getAppError } from '../mixin/errorMessageMixing'
 import { authenticationHeader } from '../mixin/authenticationMixing'
 
+interface Comments {
+    id: number,
+    description: string,
+    rating: number
+}
+
 interface Manga {
     id: number,
     title: string,
@@ -12,6 +18,7 @@ interface Manga {
      url: string,
      alternativeText: string
     },
+    comments: Comments[],
     number: number
     price: number
 }
@@ -36,7 +43,7 @@ export const useMangaStore = defineStore('manga', () => {
         pageSize: 0,
         total: 0
     })
-    
+
     async function all(page: number = 1): Promise<MangaCollection | ApplicationError> {
         try {
             const { data } = await api.get('/mangas', {
@@ -52,7 +59,7 @@ export const useMangaStore = defineStore('manga', () => {
         }
     }
         
-    async function get(id: number) {
+    async function get(id: number): Promise<Manga | ApplicationError> {
         try {
             const { data } = await api.get(`/mangas/${id}`, {
                 params: {
@@ -61,12 +68,11 @@ export const useMangaStore = defineStore('manga', () => {
             })
             return data.data
         } catch(error) {
-            console.log(getAppError(error))
-            return false
+            return getAppError(error)
         }
     }
 
-    async function create(manga: FormData) {
+    async function create(manga: FormData): Promise<Manga | ApplicationError> {
         try {
             const store = useUserStore()
             const { data } = await api.post(`/mangas/`, manga, {
@@ -77,14 +83,15 @@ export const useMangaStore = defineStore('manga', () => {
             })
             return data.data
         } catch(error) {
-            console.log(getAppError(error))
-            return undefined
+            return getAppError(error)
+            
         }
     }
         
-    async function remove(id: number) {
+    async function remove(id: number): Promise<Manga | ApplicationError> {
         try {
             const store = useUserStore()
+            console.log(store.token)
             const { data } = await api.delete(`/mangas/${id}`, {
                 headers: authenticationHeader(store.token)
             })
@@ -94,12 +101,11 @@ export const useMangaStore = defineStore('manga', () => {
             }
             return data.data
         } catch(error) {
-            console.log(getAppError(error))
-            return false
+           return getAppError(error)
         }
     }
     
-    async function update(manga: Manga, newCover?: FormData) {
+    async function update(manga: Manga, newCover?: FormData): Promise<Manga | ApplicationError> {
         const { id } = manga
         try {
             const store = useUserStore()
@@ -109,14 +115,11 @@ export const useMangaStore = defineStore('manga', () => {
                     ...authenticationHeader(store.token)
                 }
             })
-            const mangaUpdated = await get(id)
-            mangas.value = mangas.value.map(m => m.id == mangaUpdated.id ? mangaUpdated : m )
-            return mangaUpdated
+            return get(id)
         } catch(error) {
-            console.log(getAppError(error))
-            return undefined
+            return getAppError(error)
         }
     }
     
-    return { mangas, pagination, previousManga, nextManga, all, create, get, remove, update}
+    return { mangas, pagination, all, create, get, remove, update }
 })

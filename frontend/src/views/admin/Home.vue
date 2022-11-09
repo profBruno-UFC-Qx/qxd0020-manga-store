@@ -2,7 +2,8 @@
 import { ref, computed, onBeforeMount, onMounted } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { useMangaStore, MangaCollection } from '../../stores/manga'
-import { imgURL} from '../../mixin/mangaMixing'
+import { imgURL } from '../../mixin/mangaMixing'
+import { isApplicationError } from '../../mixin/errorMessageMixing'
 import PaginatedContainer from '../../components/PaginatedContainer.vue'
 
 const mangaStore = useMangaStore()
@@ -14,10 +15,10 @@ const errorMessage = ref('')
 
 async function getMangasAndUpdate(page = 1) {
   const result = await mangaStore.all(page)
-  if("mangas" in result) {
-    mangaCollection.value = result
-  } else {
+  if(isApplicationError(result)) {
     errorMessage.value = result.message
+  } else {
+    mangaCollection.value = result
   }
   loading.value = false 
 }
@@ -45,10 +46,11 @@ function askConfirmation(id: number, title: string) {
 }
 
 async function deleteManga() {
-  if (await mangaStore.remove(selectedManga.value.id)) {
+  const result = await mangaStore.remove(selectedManga.value.id)
+  if (!isApplicationError(result)) {
+    mangaCollection.value.mangas = mangaCollection.value.mangas.filter(m => m.id != selectedManga.value.id)
     selectedManga.value = { id: 0, title: ''}  
   }
-  
 }
 
 

@@ -2,19 +2,28 @@
 import { onBeforeMount, ref } from 'vue';
 import { useMangaStore } from '../../stores/manga'
 import { imgURL } from '../../mixin/mangaMixing'
+import { isApplicationError } from '../../mixin/errorMessageMixing';
 import { useRouter } from 'vue-router';
+import { tupleExpression } from '@babel/types';
 
 const props = defineProps<{
     id?: string
 }>()
 
+interface Comments {
+    id: number,
+    description: string,
+    rating: number
+}
+
 interface Manga {
     id: number,
     title: string,
     cover: {
-        url: string,
-        alternativeText: string
+     url: string,
+     alternativeText: string
     },
+    comments: Comments[],
     number: number
     price: number
 }
@@ -30,7 +39,12 @@ const alertFeedback = ref(false)
 
 onBeforeMount( async () => {
     if(props.id) {
-        manga.value = await mangaStore.get(Number(props.id))
+       const result = await mangaStore.get(Number(props.id))
+       if(isApplicationError(result)) {
+            alertMessage.value = result.message
+       } else {
+            manga.value = result
+       }
     }
 })
 
@@ -45,10 +59,13 @@ async function update() {
         price: manga.value.price
     }))
     const result = await mangaStore.update(manga.value, formData) 
-    if(result) {
+    if(isApplicationError(result)) {
+        showNegativeAlert(result.message)
+    } else {
         manga.value = result
+        showPositiveAlert("Manga atualizado com sucesso.")
     }
-    showAlert(result !== undefined, "Manga atualizado com sucesso.", "O manga não foi atualizado.")
+    
 }
 
 function handleFileUpload(event: Event) {
@@ -69,23 +86,28 @@ async function create() {
         price: manga.value.price
     }))
 
-
     const result = await mangaStore.create(formData)
-    showAlert(result !== undefined, "Manga criado com sucesso.", "O manga não foi criado.") 
-    if (result){
+
+    if(isApplicationError(result)){
+        showNegativeAlert("O manga não foi criado.")
+    } else {
+        showPositiveAlert("Manga criado com sucesso.")
         manga.value = result
         router.push({ path: '/admin', hash: `#${manga.value.id}` })
     }
 }
 
-function showAlert(success: boolean, successMsg: string, errorMessage: string) {
-if (success) {
-        alertMessage.value = successMsg
-        alertFeedback.value = true
-    } else {
-        alertMessage.value = errorMessage
-        alertFeedback.value = false
-    }
+function showPositiveAlert(message: string) {
+   showAlert(true, message)
+}
+
+function showNegativeAlert(message: string) {
+    showAlert(false, message)
+}
+
+function showAlert(positive: boolean, message: string) {
+    alertFeedback.value = positive
+    alertMessage.value = message
     alertVisible.value = true
 }
 

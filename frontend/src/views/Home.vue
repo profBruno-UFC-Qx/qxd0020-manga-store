@@ -2,6 +2,7 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { useMangaStore, MangaCollection } from '../stores/manga'
+import { isApplicationError } from '../mixin/errorMessageMixing'
 import MangaCard from '../components/MangaCard.vue'
 import PaginatedContainer from '../components/PaginatedContainer.vue'
 
@@ -14,10 +15,10 @@ const errorMessage = ref('')
 
 async function getMangasAndUpdate(page = 1) {
   const result = await mangaStore.all(page)
-  if("mangas" in result) {
-    mangaCollection.value = result
-  } else {
+  if(isApplicationError(result)) {
     errorMessage.value = result.message
+  } else {
+    mangaCollection.value = result
   }
   loading.value = false 
 }
