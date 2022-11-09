@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { api } from '../baseConfig'
 import { useUserStore } from '../stores/user'
-import { getErrorMessage } from '../mixin/errorMessageMixing'
+import { getAppError } from '../mixin/errorMessageMixing'
 import { authenticationHeader } from '../mixin/authenticationMixing'
 
 interface Manga {
@@ -54,7 +54,7 @@ export const useMangaStore = defineStore('manga', () => {
             mangas.value = data.data
             pagination.value = data.meta.pagination
         } catch(error) {
-            console.log(getErrorMessage(error))
+            console.log(getAppError(error))
             return false
         }
     }
@@ -68,7 +68,7 @@ export const useMangaStore = defineStore('manga', () => {
             })
             return data.data
         } catch(error) {
-            console.log(getErrorMessage(error))
+            console.log(getAppError(error))
             return false
         }
     }
@@ -84,7 +84,7 @@ export const useMangaStore = defineStore('manga', () => {
             })
             return data.data
         } catch(error) {
-            console.log(getErrorMessage(error))
+            console.log(getAppError(error))
             return undefined
         }
     }
@@ -101,7 +101,7 @@ export const useMangaStore = defineStore('manga', () => {
             }
             return data.data
         } catch(error) {
-            console.log(getErrorMessage(error))
+            console.log(getAppError(error))
             return false
         }
     }
@@ -120,7 +120,7 @@ export const useMangaStore = defineStore('manga', () => {
             mangas.value = mangas.value.map(m => m.id == mangaUpdated.id ? mangaUpdated : m )
             return mangaUpdated
         } catch(error) {
-            console.log(getErrorMessage(error))
+            console.log(getAppError(error))
             return undefined
         }
     }

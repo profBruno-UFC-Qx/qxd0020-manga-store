@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
 import Cookie from 'js-cookie'
 import { api } from '../baseConfig'
-import { getErrorMessage } from '../mixin/errorMessageMixing'
+import { getAppError, ApplicationError } from '../mixin/errorMessageMixing'
 import { authenticationHeader } from '../mixin/authenticationMixing'
 import { SafeLocalStorageService } from '../mixin/safeLocalStorage'
 
@@ -36,12 +36,13 @@ export const useUserStore = defineStore('user', () => {
     const isAuthenticated = computed(() => token.value !== undefined)
     const isAdmin = computed(() => role.value.toString() === "admin")
     
-    async function authenticate(login: string, password: string) {
+    async function authenticate(login: string, password: string): Promise<true | ApplicationError> {
         try {
-            const { data } = await api.post('/auth/local', {
+            const res = await api.post('/auth/local', {
                 identifier: login,
                 password: password
             })
+            const { data } = res
             user.value = {
                 id: data.user.id,
                 username: data.user.username,
@@ -53,27 +54,20 @@ export const useUserStore = defineStore('user', () => {
             updateLocalStore()
             return true
         } catch(error) {
-            console.log(getErrorMessage(error))
+            const appError = getAppError(error)
+            if(appError.name === "ValidationError") {
+                appError.message = "Usuário ou senha incorretos!"
+            }
+            return appError
         }
-        return false
     }
     
     async function getRoles() {
-        if(isAuthenticated) {
-            try {
-                const { data } = await api.get('/users/me', {
-                    headers: authenticationHeader(user.value.jwt),
-                    params: {
-                        populate: 'role'
-                    }
-                })
-                const { role } = data
-                return role.type
-            } catch(error) {
-                console.log(getErrorMessage(error))  
-            }
-        }
-        return {}
+        const { data } = await api.get('/users/me', {
+            headers: authenticationHeader(user.value.jwt)
+        })
+        const { role } = data
+        return role.type as string
     }
 
     function updateLocalStore() {

@@ -18,7 +18,7 @@ async function authenticate(event: MouseEvent){
     validated.value = true
     if(identifier.value && password.value) {
         const result = await userStore.authenticate(identifier.value, password.value)
-        if(result) {
+        if(result === true) {
             validationMessage.value = ""
             let redirect = "/"
             if(userStore.isAdmin) {
@@ -26,7 +26,7 @@ async function authenticate(event: MouseEvent){
             }
             router.push(redirect)
         } else {
-            validationMessage.value = "Usuário ou senha incorretos!"
+            validationMessage.value = result.message
         }
     }
 }
