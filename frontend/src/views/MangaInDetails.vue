@@ -24,8 +24,6 @@ interface Manga {
 }
 
 const mangaStore = useMangaStore()
-const nextManga = computed(() => mangaStore.nextManga(manga.value))
-const previousManga = computed(() => mangaStore.previousManga(manga.value))
 
 const route = useRoute()
 const id = route.params.id
@@ -50,15 +48,8 @@ onBeforeRouteUpdate( async (to, from) => {
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
-    <div class="row align-items-center" v-else>
-        <div class="col-md-2">
-            <router-link :to="{ name: 'verManga', params: { id: previousManga }}">
-                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === previousManga">
-                    <i class="bi bi-arrow-left-square-fill"></i>
-                </button>
-            </router-link>
-        </div>
-        <div class="col">
+    <div class="row justify-content-center" v-else>
+        <div class="col-lg-8 col-sm-12">
             <div class="card mb-3">
                 <div class="row g-0">
                     <div class="col-md-4">
@@ -78,13 +69,7 @@ onBeforeRouteUpdate( async (to, from) => {
                 
             </div>
         </div>
-        <div class="col-md-2">
-            <router-link :to="{ name: 'verManga', params: { id: nextManga }}">
-                <button type="button" class="btn btn-lg btn-outline-secondary" :disabled="manga.id === nextManga">
-                    <i class="bi bi-arrow-right-square-fill"></i>
-                </button>
-            </router-link>
-        </div>
+
         <div class="row">
             <CommentsContainer class="col-12" :comments="manga.comments"></CommentsContainer>
         </div>

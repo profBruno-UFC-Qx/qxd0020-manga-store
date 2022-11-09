@@ -36,17 +36,7 @@ export const useMangaStore = defineStore('manga', () => {
         pageSize: 0,
         total: 0
     })
-
-    function previousManga(manga: Manga) {
-        
-        return manga.id
-    }
     
-    function nextManga(manga: Manga) {
-        
-        return manga.id
-    }
-
     async function all(page: number = 1): Promise<MangaCollection | ApplicationError> {
         try {
             const { data } = await api.get('/mangas', {
