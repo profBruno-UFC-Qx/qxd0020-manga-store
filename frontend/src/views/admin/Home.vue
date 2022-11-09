@@ -1,20 +1,32 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount, onMounted } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { useMangaStore } from '../../stores/manga'
+import { useMangaStore, MangaCollection } from '../../stores/manga'
 import { imgURL} from '../../mixin/mangaMixing'
 import PaginatedContainer from '../../components/PaginatedContainer.vue'
 
 const mangaStore = useMangaStore()
-const mangas = computed(() => mangaStore.mangas)
-const pagination = computed(() => mangaStore.pagination)
+const mangaCollection = ref<MangaCollection>({} as MangaCollection)
+const mangas = computed(() => mangaCollection.value.mangas)
+const pagination = computed(() => mangaCollection.value.pagination)
+const loading = ref(true)
+const errorMessage = ref('')
 
+async function getMangasAndUpdate(page = 1) {
+  const result = await mangaStore.all(page)
+  if("mangas" in result) {
+    mangaCollection.value = result
+  } else {
+    errorMessage.value = result.message
+  }
+  loading.value = false 
+}
 
-onBeforeMount(async () => mangaStore.all())
+onBeforeMount(async () => getMangasAndUpdate())
 
 onBeforeRouteUpdate(async (to, from) => {
     if (to.query.page !== from.query.page) { 
-      await mangaStore.all(Number(to.query.page))
+      getMangasAndUpdate(Number(to.query.page))
     } 
 })
 
@@ -33,7 +45,7 @@ function askConfirmation(id: number, title: string) {
 }
 
 async function deleteManga() {
-  if (await mangaStore.delete(selectedManga.value.id)) {
+  if (await mangaStore.remove(selectedManga.value.id)) {
     selectedManga.value = { id: 0, title: ''}  
   }
   
@@ -43,7 +55,12 @@ async function deleteManga() {
 </script>
 
 <template>
-  <PaginatedContainer
+  <div class="text-center" v-if="loading">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <PaginatedContainer v-else
     :page="pagination.page"
     :page-count="pagination.pageCount"
     :page-size="pagination?.pageSize"

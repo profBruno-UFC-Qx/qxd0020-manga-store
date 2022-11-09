@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { api } from '../baseConfig'
 import { useUserStore } from '../stores/user'
-import { getAppError } from '../mixin/errorMessageMixing'
+import { ApplicationError, getAppError } from '../mixin/errorMessageMixing'
 import { authenticationHeader } from '../mixin/authenticationMixing'
 
 interface Manga {
@@ -23,6 +23,11 @@ interface Pagination {
     total: number
 }
 
+export type MangaCollection = {
+    mangas: Manga[],
+    pagination: Pagination
+}
+
 export const useMangaStore = defineStore('manga', () => {
     const mangas = ref<Manga[]>([])
     const pagination = ref<Pagination>({
@@ -33,16 +38,16 @@ export const useMangaStore = defineStore('manga', () => {
     })
 
     function previousManga(manga: Manga) {
-        const currentIndex = mangas.value.findIndex(m => m.id === manga.id)
-        return currentIndex > 0 ? mangas.value[currentIndex - 1].id : manga.id
+        
+        return manga.id
     }
     
     function nextManga(manga: Manga) {
-        const currentIndex = mangas.value.findIndex(m => m.id === manga.id)
-        return currentIndex < mangas.value.length - 1 ? mangas.value[currentIndex + 1].id : manga.id
+        
+        return manga.id
     }
 
-    async function all(page: number = 1) {
+    async function all(page: number = 1): Promise<MangaCollection | ApplicationError> {
         try {
             const { data } = await api.get('/mangas', {
                 params: {
@@ -51,11 +56,9 @@ export const useMangaStore = defineStore('manga', () => {
                     "pagination[page]": page
                 }
             })
-            mangas.value = data.data
-            pagination.value = data.meta.pagination
+            return { mangas: data.data,  pagination: data.meta.pagination}
         } catch(error) {
-            console.log(getAppError(error))
-            return false
+            return getAppError(error)
         }
     }
         

@@ -1,26 +1,44 @@
 <script setup lang="ts">
-import { computed, onBeforeMount } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
-import { useMangaStore } from '../stores/manga'
+import { useMangaStore, MangaCollection } from '../stores/manga'
 import MangaCard from '../components/MangaCard.vue'
 import PaginatedContainer from '../components/PaginatedContainer.vue'
 
 const mangaStore = useMangaStore()
-const mangas = computed(() => mangaStore.mangas)
-const pagination = computed(() => mangaStore.pagination)
+const mangaCollection = ref<MangaCollection>({} as MangaCollection)
+const mangas = computed(() => mangaCollection.value.mangas)
+const pagination = computed(() => mangaCollection.value.pagination)
+const loading = ref(true)
+const errorMessage = ref('')
 
-onBeforeMount(async () => mangaStore.all())
+async function getMangasAndUpdate(page = 1) {
+  const result = await mangaStore.all(page)
+  if("mangas" in result) {
+    mangaCollection.value = result
+  } else {
+    errorMessage.value = result.message
+  }
+  loading.value = false 
+}
 
-onBeforeRouteUpdate( async (to, from) => {
-    if (to.query.page !== from.query.page) { 
-      await mangaStore.all(Number(to.query.page))
-    } 
+onBeforeMount(async () => getMangasAndUpdate())
+
+onBeforeRouteUpdate(async (to, from) => {
+  if (to.query.page !== from.query.page) { 
+    getMangasAndUpdate(Number(to.query.page))
+  } 
 })
 
 </script>
 
 <template>
-  <PaginatedContainer
+  <div class="text-center" v-if="loading">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <PaginatedContainer v-else
    :page="pagination.page"
    :page-count="pagination.pageCount"
    :page-size="pagination?.pageSize"
