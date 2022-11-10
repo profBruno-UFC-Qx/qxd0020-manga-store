@@ -11,7 +11,7 @@ interface Comments {
     rating: number
 }
 
-interface Manga {
+export interface Manga {
     id: number,
     title: string,
     cover: {

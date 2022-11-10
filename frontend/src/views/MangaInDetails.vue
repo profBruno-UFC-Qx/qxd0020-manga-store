@@ -1,28 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { useMangaStore } from '../stores/manga'
+import { useMangaStore, Manga} from '../stores/manga'
 import { imgURL } from '../mixin/mangaMixing'
 import { isApplicationError } from '../mixin/errorMessageMixing'
 import CommentsContainer from '../components/Comment/Container.vue'
-
-interface Comments {
-    id: number,
-    description: string,
-    rating: number
-}
-
-interface Manga {
-    id: number,
-    title: string,
-    cover: {
-        url: string,
-        alternativeText: string
-    },
-    comments: Comments[],
-    number: number
-    price: number
-}
 
 const mangaStore = useMangaStore()
 

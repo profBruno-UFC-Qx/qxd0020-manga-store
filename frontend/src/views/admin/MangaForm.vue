@@ -1,32 +1,14 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { useMangaStore } from '../../stores/manga'
+import { useMangaStore, Manga } from '../../stores/manga'
 import { imgURL } from '../../mixin/mangaMixing'
 import { isApplicationError } from '../../mixin/errorMessageMixing';
 import { useRouter } from 'vue-router';
-import { tupleExpression } from '@babel/types';
 
 const props = defineProps<{
     id?: string
 }>()
 
-interface Comments {
-    id: number,
-    description: string,
-    rating: number
-}
-
-interface Manga {
-    id: number,
-    title: string,
-    cover: {
-     url: string,
-     alternativeText: string
-    },
-    comments: Comments[],
-    number: number
-    price: number
-}
 
 const mangaStore = useMangaStore()
 const manga = ref<Manga>({} as Manga)
