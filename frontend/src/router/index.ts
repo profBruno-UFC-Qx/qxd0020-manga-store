@@ -4,7 +4,7 @@ import AdminHome from '../views/admin/Home.vue'
 import MangaForm from '../views/admin/MangaForm.vue'
 import Home from '../views/Home.vue'
 import MangaExpandedCard from '../views/MangaInDetails.vue'
-import NotFound from '../views/NotFound.vue'
+import Error from '../views/error/Error.vue'
 
 const routes = [
     {
@@ -43,9 +43,9 @@ const routes = [
         name: 'verManga',
     },
     {
-        path: '/404',
-        component: NotFound,
-        name: 'notFound',
+        path: '/error',
+        component: Error,
+        name: 'error',
         props: true
     }
 ]

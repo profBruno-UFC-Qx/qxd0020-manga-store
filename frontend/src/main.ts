@@ -7,10 +7,13 @@ import { useUserStore } from './stores/user'
 
 
 api.interceptors.response.use(response => response, error => {
-    if(error.response && error.response.status === 404) {
+    if(error.response && error.response.status !== 400) {
         router.replace({
-            name: 'notFound',
-            params: { msg: error.response.data.error.message }
+            name: 'error',
+            params: { 
+                status: error.response.status,
+                msg: error.response.data.error.message 
+            }
         })
     } else {
         console.log(error)
