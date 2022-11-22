@@ -65,8 +65,7 @@ async function deleteManga() {
   <PaginatedContainer v-else
     :page="pagination.page"
     :page-count="pagination.pageCount"
-    :page-size="pagination?.pageSize"
-    :total="pagination?.total"
+    :total="pagination.total"
   >
     <router-link :to="{ name: 'addManga'}" class="btn btn-success"><i class="bi bi-plus"></i>Add</router-link>
     

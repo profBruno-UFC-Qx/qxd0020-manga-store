@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 
-interface Pagination {
+defineProps<{
     page: number,
-    pageSize: number,
     pageCount: number,
     total: number,
-}
+}>()
 
-defineProps<Pagination>()
 const route = useRoute()
 const url = route.name?.toString()
 

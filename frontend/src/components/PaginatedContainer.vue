@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import Pagination from './Pagination.vue'
 
-interface Pagination {
+defineProps< {
     page: number,
-    pageSize: number,
     pageCount: number,
     total: number,
-}
-defineProps<Pagination>()
+}>()
 
 </script>
 
@@ -15,7 +13,6 @@ defineProps<Pagination>()
  <Pagination
    :page="page"
    :page-count="pageCount"
-   :page-size="pageSize"
    :total="total"
   ></Pagination>
 
@@ -24,7 +21,6 @@ defineProps<Pagination>()
   <Pagination
    :page="page"
    :page-count="pageCount"
-   :page-size="pageSize"
    :total="total"
   ></Pagination>
 </template>
