@@ -64,7 +64,10 @@ export const useUserStore = defineStore('user', () => {
     
     async function getRoles() {
         const { data } = await api.get('/users/me', {
-            headers: authenticationHeader(user.value.jwt)
+            headers: authenticationHeader(user.value.jwt),
+            params: {
+                populate: ["role"],
+            }
         })
         const { role } = data
         return role.type as string

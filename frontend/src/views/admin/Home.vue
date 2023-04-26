@@ -12,6 +12,7 @@ const mangas = computed(() => mangaCollection.value.mangas)
 const pagination = computed(() => mangaCollection.value.pagination)
 const loading = ref(true)
 const errorMessage = ref('')
+const route = useRoute()
 
 async function getMangasAndUpdate(page = 1) {
   const result = await mangaStore.all(page)
@@ -23,11 +24,14 @@ async function getMangasAndUpdate(page = 1) {
   loading.value = false 
 }
 
-onBeforeMount(async () => getMangasAndUpdate())
+onBeforeMount(async () => {
+  const page = route.query.page ? Number(route.query.page): 1
+  getMangasAndUpdate(page)
+})
 
 onBeforeRouteUpdate(async (to, from) => {
     if (to.query.page !== from.query.page) { 
-      getMangasAndUpdate(Number(to.query.page))
+      getMangasAndUpdate(to.query.page ? Number(to.query.page): 1)
     } 
 })
 
