@@ -5,6 +5,7 @@ import { useMangaStore, MangaCollection } from '../stores/manga'
 import { isApplicationError } from '../mixin/errorMessageMixing'
 import MangaCard from '../components/MangaCard.vue'
 import PaginatedContainer from '../components/PaginatedContainer.vue'
+import LoadingContainer from '../components/LoadingContainer.vue'
 
 const mangaStore = useMangaStore()
 const mangaCollection = ref<MangaCollection>({} as MangaCollection)
@@ -39,24 +40,20 @@ onBeforeRouteUpdate(async (to, from) => {
 </script>
 
 <template>
-  <div class="text-center" v-if="loading">
-    <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-  <PaginatedContainer v-else
-   :page="pagination.page"
-   :page-count="pagination.pageCount"
-   :page-size="pagination?.pageSize"
-   :total="pagination?.total"
-  >
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          <MangaCard v-for="manga in mangas" :key="manga.id"
-          :id="manga.id"
-          :title="manga.title"
-          :cover="manga.cover.url"
-          :number="manga.number"
-          :price="manga.price"></MangaCard>
-    </div>
-  </PaginatedContainer>
+  <LoadingContainer :loading="loading">
+    <PaginatedContainer
+     :page="pagination.page"
+     :page-count="pagination.pageCount"
+     :total="pagination?.total"
+    >
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <MangaCard v-for="manga in mangas" :key="manga.id"
+        :id="manga.id"
+        :title="manga.title"
+        :cover="manga.cover.url"
+        :number="manga.number"
+        :price="manga.price"></MangaCard>
+      </div>
+    </PaginatedContainer>
+  </LoadingContainer>
 </template>
