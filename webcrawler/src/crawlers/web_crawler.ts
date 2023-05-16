@@ -1,29 +1,29 @@
 import { AxiosResponse, AxiosStatic } from 'axios';
 import Events from 'events';
-import { listeners } from 'process';
 
 export abstract class WebCrawler<T> {
-    protected _axios: AxiosStatic;
-    protected _urls: URL[] = [];
-    private _emmiter = new Events.EventEmitter();
-    protected _result: T[] = [];
+    protected axios: AxiosStatic;
+    protected readonly url: URL;
+    private emmiter = new Events.EventEmitter();
+    protected result: T[] = [];
 
-    constructor(axios: AxiosStatic) {
-        this._axios = axios;
+    constructor(axios: AxiosStatic, url: URL) {
+        this.axios = axios;
+        this.url = url;
     }
 
     addListener(listerner: (...args: any[]) => void): void {
-        this._emmiter.addListener('load', listerner);
+        this.emmiter.addListener('load', listerner);
     }
 
     removeListerner(listerner: (...args: any[]) => void) {
-        this._emmiter.removeListener('load', listeners);
+        this.emmiter.removeListener('load', listerner);
     }
 
     protected abstract parse(response: AxiosResponse): Promise<T[]>;
 
     private async fecthData(url: URL) {
-        const response = await this._axios(url.toString()).catch((err) => console.log(err)) as AxiosResponse;
+        const response = await this.axios(url.toString()).catch((err) => console.log(err)) as AxiosResponse;
 
         if(response.status == 200) {
             return response;
@@ -33,14 +33,9 @@ export abstract class WebCrawler<T> {
     }
 
     async fetchData() {
-
-        for (const url of this._urls) {
-            const response = await this.fecthData(url);
-            const result = await this.parse(response);
-            this._result = this._result.concat(result);   
-        }
-
-        this._emmiter.emit('load', this._result);
-        
+        const response = await this.fecthData(this.url);
+        const result = await this.parse(response);
+        this.result = this.result.concat(result);   
+        this.emmiter.emit('load', this.result);
     }
 }

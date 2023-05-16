@@ -5,7 +5,7 @@ import { FormData } from 'formdata-node';
 import fetch, { blobFrom } from 'node-fetch';
 
 const __dirname = path.resolve()
-const dbPath = path.join(__dirname, '../webcrawler/output/mangas.csv')
+const dbPath = path.join(__dirname, '../output/mangas.csv')
 
 async function populate() {
     const fileContent = fs.readFileSync(dbPath);
@@ -17,7 +17,7 @@ async function populate() {
         const price = record.price
         const summary = record.summary || ""
 
-        const coverPath = path.join(__dirname, `../backend/public/${cover}`)
+        const coverPath = path.join(__dirname, `../output/${cover}`)
         const form = new FormData();
 
         form.append('data', JSON.stringify({

@@ -108,7 +108,7 @@ Agora o backend usando Strapi está pronto.
 O primeiro passo para rodar este backend é entra na pasta dele e instalar as suas dependências.
 
 ```
-cd strapi-backend
+cd backend
 yarn install # ou npm install
 ```
 Antes de você executar o projeto você precisará criar o arquivo chamado **.env**. Ele deve possuir o seguinte conteúdo:

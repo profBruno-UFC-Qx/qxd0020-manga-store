@@ -3,7 +3,7 @@ import { parse } from 'csv-parse/sync';
 import * as fs from "fs";
 import path from "path";
 
-const dbPath = path.join(__dirname, '../../../webcrawler/output/mangas.csv')
+const dbPath = path.join(__dirname, '../../../output/mangas.csv')
 
 export class Initialization1656988250329 implements MigrationInterface {
 
@@ -11,7 +11,7 @@ export class Initialization1656988250329 implements MigrationInterface {
         const fileContent = fs.readFileSync(dbPath);
         const records = parse(fileContent, {columns: true});
         for (let record of records) {
-            const title = record.title;
+            const title = record.title.replace('"', '\"');
             const volumeNumber = Number(record.number);
             const cover = record.cover;
             const price = record.price
@@ -19,12 +19,12 @@ export class Initialization1656988250329 implements MigrationInterface {
 
             await queryRunner.query(
                 `INSERT INTO cover 
-                ("url", "alternativeText") VALUES ("${cover}", "${volumeNumber} - ${title}")`,
+                ("url", "alternativeText") VALUES ("/${cover}", '${volumeNumber} - ${title}')`,
             )
 
             await queryRunner.query(
                 `INSERT INTO manga 
-                ("title", "number", "price", "coverId", "summary") VALUES ("${title}", ${volumeNumber}, ${price}, ${volumeNumber}, '${summary}')`,
+                ("title", "number", "price", "coverId", "summary") VALUES ('${title}', ${volumeNumber}, ${price}, ${volumeNumber}, '${summary}')`,
             )
         }
 

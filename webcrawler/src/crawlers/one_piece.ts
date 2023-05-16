@@ -1,4 +1,4 @@
-import path from "path";
+
 import * as cheerio from "cheerio";
 import { AxiosResponse, AxiosStatic } from "axios";
 import { Manga } from "../models/Manga";
@@ -7,8 +7,7 @@ import { WebCrawler } from "./web_crawler";
 export class OnePieceCrawler extends WebCrawler<Manga> {
 
     constructor(axios: AxiosStatic) {
-        super(axios);
-        this._urls.push(new URL('https://onepieceex.net/mangas/'));
+        super(axios, new URL('https://onepieceex.net/mangas'))
     }
     
     async parse(response: AxiosResponse<any, any>): Promise<Manga[]> {
@@ -29,8 +28,7 @@ export class OnePieceCrawler extends WebCrawler<Manga> {
             } else {
                 summary = summary.substring("RESENHA OFICIAL: ".length)
             }
-
-            console.log(summary)
+            
             const chapters: string[] = [];
             $(element).find('.info > .capitulos.hide > ul > li.volume-capitulo > span').each((i, cap) => {
                 chapters.push($(cap).text());
@@ -38,7 +36,7 @@ export class OnePieceCrawler extends WebCrawler<Manga> {
                     
             let cover = $(element).find('.info > .capitulos.hide > a.capa > img').first().attr('src');
             if (cover) {
-                cover = `/img/one_piece/${path.basename(cover)}`
+                cover = `${this.url.host}${cover}`
             }
             const manga = new Manga(i + 1, title, volumeNumber, summary, chapters, cover);
             result.push(manga);
