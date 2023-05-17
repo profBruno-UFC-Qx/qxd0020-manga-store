@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount, onMounted } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { useMangaStore, MangaCollection } from '../../stores/manga'
+import { useUserStore } from '../../stores/user'
 import { imgURL } from '../../mixin/mangaMixing'
 import { isApplicationError } from '../../mixin/errorMessageMixing'
+import { Collection } from '../../repositories/BaseRepository'
+import { Manga } from '../../models/Manga'
+import { useMangaService } from '../../repositories/MangaRepository'
 import PaginatedContainer from '../../components/PaginatedContainer.vue'
 import LoadingContainer from '../../components/LoadingContainer.vue'
 
-const mangaStore = useMangaStore()
-const mangaCollection = ref<MangaCollection>({} as MangaCollection)
-const mangas = computed(() => mangaCollection.value.mangas)
+const userStore = useUserStore()
+const mangaService = useMangaService()
+const mangaCollection = ref<Collection<Manga>>({} as Collection<Manga>)
+const mangas = computed(() => mangaCollection.value.items)
 const pagination = computed(() => mangaCollection.value.pagination)
 const loading = ref(true)
 const errorMessage = ref('')
 const route = useRoute()
 
 async function getMangasAndUpdate(page = 1) {
-  const result = await mangaStore.all(page)
+  const result = await mangaService.all({ pagination: { page } })
   if(isApplicationError(result)) {
     errorMessage.value = result.message
   } else {
@@ -51,9 +55,9 @@ function askConfirmation(id: number, title: string) {
 }
 
 async function deleteManga() {
-  const result = await mangaStore.remove(selectedManga.value.id)
+  const result = await mangaService.remove(selectedManga.value.id, userStore.token)
   if (!isApplicationError(result)) {
-    mangaCollection.value.mangas = mangaCollection.value.mangas.filter(m => m.id != selectedManga.value.id)
+    mangaCollection.value.items = mangaCollection.value.items.filter(m => m.id != selectedManga.value.id)
     selectedManga.value = { id: 0, title: ''}  
   }
 }

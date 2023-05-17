@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount } from 'vue'
 import { onBeforeRouteUpdate, useRoute } from 'vue-router'
-import { useMangaStore, MangaCollection } from '../stores/manga'
+import { Collection } from '../repositories/BaseRepository'
+import { Manga } from '../models/Manga'
+import { useMangaService } from '../repositories/MangaRepository'
 import { isApplicationError } from '../mixin/errorMessageMixing'
 import MangaCard from '../components/MangaCard.vue'
 import PaginatedContainer from '../components/PaginatedContainer.vue'
 import LoadingContainer from '../components/LoadingContainer.vue'
 
-const mangaStore = useMangaStore()
-const mangaCollection = ref<MangaCollection>({} as MangaCollection)
-const mangas = computed(() => mangaCollection.value.mangas)
+const mangaStore = useMangaService()
+const mangaCollection = ref<Collection<Manga>>({} as Collection<Manga>)
+const mangas = computed(() => mangaCollection.value.items)
 const pagination = computed(() => mangaCollection.value.pagination)
 const loading = ref(true)
 const errorMessage = ref('')
 const route = useRoute()
 
 async function getMangasAndUpdate(page = 1) {
-  const result = await mangaStore.all(page)
+  const result = await mangaStore.all({pagination: {page}})
   if(isApplicationError(result)) {
     errorMessage.value = result.message
   } else {

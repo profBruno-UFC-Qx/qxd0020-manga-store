@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { useMangaStore, Manga } from '../../stores/manga'
+import { useUserStore } from '../../stores/user';
+import { Manga } from '../../models/Manga'
+import { useMangaService } from '../../repositories/MangaRepository';
 import { imgURL } from '../../mixin/mangaMixing'
 import { isApplicationError } from '../../mixin/errorMessageMixing';
 import { useRouter } from 'vue-router';
@@ -9,8 +11,8 @@ const props = defineProps<{
     id?: string
 }>()
 
-
-const mangaStore = useMangaStore()
+const userStore = useUserStore()
+const mangaService = useMangaService()
 const manga = ref<Manga>({} as Manga)
 const cover = ref<File>({} as File)
 const router = useRouter()
@@ -21,7 +23,7 @@ const alertFeedback = ref(false)
 
 onBeforeMount( async () => {
     if(props.id) {
-       const result = await mangaStore.get(Number(props.id))
+       const result = await mangaService.get(Number(props.id))
        if(isApplicationError(result)) {
             alertMessage.value = result.message
        } else {
@@ -35,12 +37,13 @@ async function update() {
     if(cover.value.name) {
         formData.append('files.cover', cover.value)
     }
-    formData.append('data', JSON.stringify({
-        title: manga.value.title,
-        number: manga.value.number,
-        price: manga.value.price
-    }))
-    const result = await mangaStore.update(manga.value, formData) 
+
+    const { title, number, price } = manga.value
+    const result = await mangaService.update(manga.value.id, {
+        title,
+        number,
+        price,
+    }, userStore.token , cover.value.name ? formData : undefined) 
     if(isApplicationError(result)) {
         showNegativeAlert(result.message)
     } else {
@@ -62,13 +65,12 @@ async function create() {
     if(cover.value.name) {
         formData.append('files.cover', cover.value, cover.value.name)
     }
-    formData.append('data', JSON.stringify({
-        title: manga.value.title,
-        number: manga.value.number,
-        price: manga.value.price
-    }))
-
-    const result = await mangaStore.create(formData)
+    const { title, number, price } = manga.value
+    const result = await mangaService.create({
+        title,
+        number,
+        price
+    }, userStore.token, formData)
 
     if(isApplicationError(result)){
         showNegativeAlert("O manga não foi criado.")
