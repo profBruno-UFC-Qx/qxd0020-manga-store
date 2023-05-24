@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 import Cookie from 'js-cookie'
 import { api } from '../baseConfig'
 import { getAppError, ApplicationError } from '../mixin/errorMessageMixing'
-import { authenticationHeader } from '../mixin/authenticationMixing'
+import { bearerAuthorization } from '../composables/useBearerHeader'
 import { SafeLocalStorageService } from '../mixin/safeLocalStorage'
 
 interface User {
@@ -64,7 +64,7 @@ export const useUserStore = defineStore('user', () => {
     
     async function getRoles() {
         const { data } = await api.get('/users/me', {
-            headers: authenticationHeader(user.value.jwt),
+            headers: bearerAuthorization(user.value.jwt),
             params: {
                 populate: ["role"],
             }

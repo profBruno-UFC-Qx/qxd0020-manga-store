@@ -1,43 +1,26 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeMount, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { useUserStore } from '../../stores/user'
 import { imgURL } from '../../mixin/mangaMixing'
 import { isApplicationError } from '../../mixin/errorMessageMixing'
-import { Collection } from '../../repositories/BaseRepository'
-import { Manga } from '../../models/Manga'
-import { useMangaService } from '../../repositories/MangaRepository'
+import { useMangaService } from '../../api/MangaService'
+import { useMangaCollection } from '../../composables/mangaCollection'
 import PaginatedContainer from '../../components/PaginatedContainer.vue'
 import LoadingContainer from '../../components/LoadingContainer.vue'
 
-const userStore = useUserStore()
 const mangaService = useMangaService()
-const mangaCollection = ref<Collection<Manga>>({} as Collection<Manga>)
+
+const { loading, mangaCollection, errorMessage, refresh} = useMangaCollection()
+const route = useRoute()
+if (route.query.page) refresh(Number(route.query.page))
+
 const mangas = computed(() => mangaCollection.value.items)
 const pagination = computed(() => mangaCollection.value.pagination)
-const loading = ref(true)
-const errorMessage = ref('')
-const route = useRoute()
 
-async function getMangasAndUpdate(page = 1) {
-  const result = await mangaService.all({ pagination: { page } })
-  if(isApplicationError(result)) {
-    errorMessage.value = result.message
-  } else {
-    mangaCollection.value = result
-  }
-  loading.value = false 
-}
-
-onBeforeMount(async () => {
-  const page = route.query.page ? Number(route.query.page): 1
-  getMangasAndUpdate(page)
-})
-
-onBeforeRouteUpdate(async (to, from) => {
-    if (to.query.page !== from.query.page) { 
-      getMangasAndUpdate(to.query.page ? Number(to.query.page): 1)
-    } 
+onBeforeRouteUpdate((to, from) => {
+  if (to.query.page !== from.query.page) { 
+    refresh(to.query.page ? Number(to.query.page): 1)
+  } 
 })
 
 onMounted(() => {
@@ -55,7 +38,7 @@ function askConfirmation(id: number, title: string) {
 }
 
 async function deleteManga() {
-  const result = await mangaService.remove(selectedManga.value.id, userStore.token)
+  const result = await mangaService.remove(selectedManga.value.id)
   if (!isApplicationError(result)) {
     mangaCollection.value.items = mangaCollection.value.items.filter(m => m.id != selectedManga.value.id)
     selectedManga.value = { id: 0, title: ''}  

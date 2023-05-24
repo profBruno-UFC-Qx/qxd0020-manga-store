@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { ref } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { imgURL } from '../mixin/mangaMixing'
 import { isApplicationError } from '../mixin/errorMessageMixing'
-import { useMangaService } from '../repositories/MangaRepository'
+import { useMangaService } from '../api/MangaService'
 import { Manga } from '../models/Manga';
 import CommentsContainer from '../components/Comment/Container.vue'
 import LoadingContainer from '../components/LoadingContainer.vue'
@@ -26,9 +26,9 @@ async function getMangaAndUpdate(id: number) {
     loading.value = false 
 }
 
-onBeforeMount( async () => {
-    getMangaAndUpdate(id)
-})
+
+getMangaAndUpdate(id)
+
 
 
 onBeforeRouteUpdate( async (to, from) => {
