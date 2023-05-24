@@ -10,7 +10,7 @@ defineProps<{ comments: {
 </script>
 
 <template>
-  <div>
+  <section>
       <h4>Avaliações</h4>
       <hr>
       <template v-if="comments.length > 0">
@@ -19,8 +19,8 @@ defineProps<{ comments: {
             :rating="comment.rating"
           ></Comment>
       </template>
-      <section v-else>
+      <template v-else>
           Nenhum comentário feito até o momento
-      </section>   
-  </div> 
+      </template>   
+    </section> 
 </template>

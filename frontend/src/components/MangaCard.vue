@@ -15,7 +15,7 @@ defineProps<{
     <div class="col-lg-3 col-md-4 col-sm-1">
         <router-link :to="`/mangas/${id}`" class="text-decoration-none text-reset">
             <div class="card shadow-sm">
-                <img :src="imgURL(cover)" class="card-img-top" alt="...">
+                <img :src="imgURL(cover)" class="card-img-top" :alt="title">
 
                 <div class="card-body text-center">
                     <h5 class="card-title">{{number}} - {{title}}</h5>
@@ -28,3 +28,14 @@ defineProps<{
         </router-link>
     </div>
 </template>
+
+<style scoped>
+img {
+    filter: grayscale(0%);
+    transition: 0.3s ease-in-out;
+}
+
+img:hover {
+    filter: grayscale(100%);
+}
+</style>
