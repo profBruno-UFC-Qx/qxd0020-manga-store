@@ -3,17 +3,11 @@ import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
 import Cookie from 'js-cookie'
 import { api } from '../baseConfig'
-import { getAppError, ApplicationError } from '../mixin/errorMessageMixing'
+import { User } from '../types'
 import { bearerAuthorization } from '../composables/useBearerHeader'
+import { getAppError, ApplicationError } from '../mixin/errorMessageMixing'
 import { SafeLocalStorageService } from '../mixin/safeLocalStorage'
 
-interface User {
-    id: number,
-    username: string,
-    email: string,
-    jwt: string,
-    role: string
-}
 
 const cookieName = 'xbcAa-vG.HzbSh5.'
 const encryptionToken = Cookie.get(cookieName) || uuid()

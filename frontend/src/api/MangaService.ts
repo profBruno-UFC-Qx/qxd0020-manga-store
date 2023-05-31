@@ -1,9 +1,8 @@
-import { ApplicationError } from '../mixin/errorMessageMixing';
-import { useUserStore } from '../stores/user';
-import { Manga } from '../models/Manga'
-import { RequestOptions, Collection } from '../adapters/BaseAdapter';
-import { StrapiAdapter } from '../adapters/StrapiAdapter';
-import { bearerAuthorization } from '../composables/useBearerHeader';
+import { Manga, ApplicationError } from '../types'
+import { RequestOptions, Collection } from '../adapters/BaseAdapter'
+import { StrapiAdapter } from '../adapters/StrapiAdapter'
+import { bearerAuthorization } from '../composables/useBearerHeader'
+import { useUserStore } from '../stores/user'
 
 class MangaService {
   readonly adapter: StrapiAdapter<Manga>
@@ -35,7 +34,7 @@ class MangaService {
     const body = new FormData()
     body.append('files.cover', item.cover)
     body.append('data', JSON.stringify(item))
-    return this.adapter.post(this.endpoint, { data: body }, bearerAuthorization(useUserStore().token))
+    return this.adapter.post(this.endpoint, body, bearerAuthorization(useUserStore().token))
   }
 
   remove(id: number): Promise<Manga | ApplicationError> {
@@ -49,7 +48,7 @@ class MangaService {
       body.append('files.cover', item.cover)
       body.append('data', JSON.stringify(item))
     } 
-    return this.adapter.put(this.endpoint, id, { data: body }, bearerAuthorization(useUserStore().token))
+    return this.adapter.put(this.endpoint, id, body, bearerAuthorization(useUserStore().token))
   }
 }
 

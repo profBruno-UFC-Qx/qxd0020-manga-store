@@ -1,10 +1,6 @@
 import axios from 'axios'
+import { ApplicationError } from '../types'
 
-export interface ApplicationError {
-  name: string,
-  message: string,
-  details?: string,
-}
 
 export function isApplicationError(error: any): error is ApplicationError {
   return error.name !== undefined && error.message !== undefined

@@ -1,7 +1,8 @@
-import { stringify } from 'qs';
-import { api } from '../baseConfig';
-import { ApplicationError, getAppError } from '../mixin/errorMessageMixing'
-import { BaseAdapter, Collection, RequestOptions, Headers, PaginationOptions, SortOption } from './BaseAdapter'
+import { stringify } from 'qs'
+import { ApplicationError } from '../types'
+import { api } from '../baseConfig'
+import { getAppError } from '../mixin/errorMessageMixing'
+import { BaseAdapter, Collection, RequestOptions, Headers, PaginationOptions, SortOption, Pagination } from './BaseAdapter'
 
 type PopulateArray<T> = (keyof T)[]
 
@@ -31,6 +32,13 @@ export interface StrapiRequest<T> extends RequestOptions<T> {
   publicationState?: PublicationState
 }
 
+export interface StrapiResponse<T> {
+  data: T,
+  meta: {
+    pagination: Pagination
+  }
+}
+
 export class StrapiAdapter<T> extends BaseAdapter<T> {
 
   private paginationToParams(pagination: Partial<PaginationOptions>) {
@@ -58,7 +66,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
   async get(url: string, { populate, fields, filters, pagination, sort, publicationState }: StrapiRequest<T> = {}, headers?: Headers | undefined): Promise<Collection<T> | ApplicationError> {
     try {
       const query = this.buldingQuery({ populate, fields, filters, pagination, sort, publicationState })
-      const { data } = await api.get(`${url}?${query}`, {
+      const { data } = await api.get<StrapiResponse<T[]>>(`${url}?${query}`, {
         headers: {
           ...headers
         }
@@ -72,7 +80,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
   async getById(url: string, id: number, { populate, fields, filters, pagination, sort, publicationState }: StrapiRequest<T> = {}, headers?: Headers | undefined): Promise<T | ApplicationError> {
     try {
       const query = this.buldingQuery({ populate, fields, filters, pagination, sort, publicationState })
-      const { data } = await api.get(`${url}/${id}?${query}`, {
+      const { data } = await api.get<StrapiResponse<T>>(`${url}/${id}?${query}`, {
         headers: {
           ...headers
         }
@@ -85,12 +93,12 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
 
   async post(url: string, body?: object | FormData | Blob | ArrayBuffer | ArrayBufferView | URLSearchParams | File | undefined, headers?: Headers | undefined): Promise<T | ApplicationError> {
     try {
-      const { data } = await api.post(url, body, {
+      const { data } = await api.post<T>(url, {data: body}, {
         headers: {
           ...headers
         }
       })
-      return data.data
+      return data
     } catch (error) {
       return getAppError(error)
     }
@@ -98,7 +106,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
 
   async put(url: string, id: number, body?: object | FormData | Blob | ArrayBuffer | ArrayBufferView | URLSearchParams | File | undefined, headers?: Headers | undefined): Promise<T | ApplicationError> {
     try {
-        await api.put(`${url}/${id}`, body, {
+        await api.put<T>(`${url}/${id}`, {data: body}, {
             headers: {
               ...headers
             }
@@ -111,12 +119,12 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
 
   async delete(url: string, id: number, headers?: Headers | undefined): Promise<T | ApplicationError> {
     try {
-      const { data } = await api.delete(`${url}/${id}`, {
+      const { data } = await api.delete<T>(`${url}/${id}`, {
         headers: {
           ...headers
         }
       })
-      return data.data
+      return data
     } catch (error) {
       return getAppError(error)
     }

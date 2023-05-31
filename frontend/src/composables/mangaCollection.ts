@@ -1,6 +1,6 @@
 import { ref } from 'vue'
+import { Manga } from '../types'
 import { Collection } from '../adapters/BaseAdapter'
-import { Manga } from '../models/Manga'
 import { useMangaService } from '../api/MangaService'
 import { isApplicationError } from '../mixin/errorMessageMixing'
 

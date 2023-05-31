@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Manga } from '../../types'
 import { imgURL } from '../../mixin/mangaMixing'
 import { isApplicationError } from '../../mixin/errorMessageMixing'
-import { Manga } from '../../models/Manga'
 import { useMangaService } from '../../api/MangaService'
 
 const props = defineProps<{

@@ -1,12 +1,11 @@
-import { ApplicationError } from "../mixin/errorMessageMixing";
-import { api } from "../baseConfig";
+import { ApplicationError } from "../types"
 
 export type Collection<T> = {
   items: T[],
   pagination: Pagination
 }
 
-interface Pagination extends PaginationOptions {
+export interface Pagination extends PaginationOptions {
   page: number,
   pageSize: number,
   pageCount: number,

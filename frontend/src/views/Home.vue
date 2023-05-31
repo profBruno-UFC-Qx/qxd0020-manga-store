@@ -34,7 +34,7 @@ onBeforeRouteUpdate((to, from) => {
         <MangaCard v-for="manga in mangas" :key="manga.id"
         :id="manga.id"
         :title="manga.title"
-        :cover="manga.cover.url"
+        :cover="manga.cover"
         :number="manga.number"
         :price="manga.price"></MangaCard>
       </div>
