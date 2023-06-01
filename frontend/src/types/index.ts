@@ -3,7 +3,9 @@ export interface User {
   username: string,
   email: string,
   jwt: string,
-  role: string
+  role: {
+    type: string
+  }
 }
 
 export interface Comment {
@@ -27,5 +29,5 @@ export interface Manga {
 export interface ApplicationError {
   name: string,
   message: string,
-  details?: string,
+  details?: string[],
 }

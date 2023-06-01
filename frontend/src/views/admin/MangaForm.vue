@@ -3,7 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Manga } from '../../types'
 import { imgURL } from '../../mixin/mangaMixing'
-import { isApplicationError } from '../../mixin/errorMessageMixing'
+import { useErrorUtil } from '../../composables/useApplicationError'
 import { useMangaService } from '../../api/MangaService'
 
 const props = defineProps<{
@@ -22,7 +22,7 @@ const alertFeedback = ref(false)
 onBeforeMount(async () => {
   if (props.id) {
     const result = await mangaService.get(Number(props.id))
-    if (isApplicationError(result)) {
+    if (useErrorUtil().isAppError(result)) {
       alertMessage.value = result.message
     } else {
       manga.value = result
@@ -38,7 +38,7 @@ async function update() {
     price,
     cover: cover.value
   })
-  if (isApplicationError(result)) {
+  if (useErrorUtil().isAppError(result)) {
     showNegativeAlert(result.message)
   } else {
     manga.value = await mangaService.get(Number(props.id)) as Manga
@@ -63,7 +63,7 @@ async function create() {
       cover: cover.value
     })
 
-    if (isApplicationError(result)) {
+    if (useErrorUtil().isAppError(result)) {
       showNegativeAlert("O manga não foi criado.")
     } else {
       showPositiveAlert("Manga criado com sucesso.")

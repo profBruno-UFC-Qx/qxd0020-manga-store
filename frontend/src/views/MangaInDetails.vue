@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { Manga } from '../types'
 import { imgURL } from '../mixin/mangaMixing'
-import { isApplicationError } from '../mixin/errorMessageMixing'
+import { useErrorUtil } from '../composables/useApplicationError'
 import { useMangaService } from '../api/MangaService'
 import CommentsContainer from '../components/Comment/Container.vue'
 import LoadingContainer from '../components/LoadingContainer.vue'
@@ -18,7 +18,7 @@ const errorMessage = ref('')
 
 async function getMangaAndUpdate(id: number) {
   const result = await mangaService.get(id)
-  if (isApplicationError(result)) {
+  if (useErrorUtil().isAppError(result)) {
     errorMessage.value = result.message
   } else {
     manga.value = result

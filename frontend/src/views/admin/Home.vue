@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { imgURL } from '../../mixin/mangaMixing'
-import { isApplicationError } from '../../mixin/errorMessageMixing'
+import { useErrorUtil } from '../../composables/useApplicationError'
 import { useMangaService } from '../../api/MangaService'
 import { useMangaCollection } from '../../composables/mangaCollection'
 import PaginatedContainer from '../../components/PaginatedContainer.vue'
@@ -10,8 +10,9 @@ import LoadingContainer from '../../components/LoadingContainer.vue'
 
 const mangaService = useMangaService()
 
-const { loading, mangaCollection, errorMessage, refresh} = useMangaCollection()
+const { loading, mangaCollection, errorMessage, refresh } = useMangaCollection()
 const route = useRoute()
+
 if (route.query.page) refresh(Number(route.query.page))
 
 const mangas = computed(() => mangaCollection.value.items)
@@ -39,7 +40,7 @@ function askConfirmation(id: number, title: string) {
 
 async function deleteManga() {
   const result = await mangaService.remove(selectedManga.value.id)
-  if (!isApplicationError(result)) {
+  if (!useErrorUtil().isAppError(result)) {
     mangaCollection.value.items = mangaCollection.value.items.filter(m => m.id != selectedManga.value.id)
     selectedManga.value = { id: 0, title: ''}  
   }

@@ -1,7 +1,7 @@
 import { stringify } from 'qs'
 import { ApplicationError } from '../types'
 import { api } from '../baseConfig'
-import { getAppError } from '../mixin/errorMessageMixing'
+import { useErrorUtil } from '../composables/useApplicationError'
 import { BaseAdapter, Collection, RequestOptions, Headers, PaginationOptions, SortOption, Pagination } from './BaseAdapter'
 
 type PopulateArray<T> = (keyof T)[]
@@ -32,11 +32,33 @@ export interface StrapiRequest<T> extends RequestOptions<T> {
   publicationState?: PublicationState
 }
 
-export interface StrapiResponse<T> {
+interface StrapiResponse<T> {
   data: T,
   meta: {
     pagination: Pagination
   }
+}
+
+interface StrapiError {
+  error: {
+    status: number,
+    name: string,
+    message: string,
+    details: {
+      errors: StrapiErrorDetail[]
+    }
+  }
+}
+
+interface StrapiErrorDetail {
+  path: string[],
+  message: string,
+  name: string,
+}
+
+function transform(strapiError: StrapiError) : ApplicationError {
+  const { name, message, details } = strapiError.error
+  return { name, message, details: details.errors.map(d => d.message) }
 }
 
 export class StrapiAdapter<T> extends BaseAdapter<T> {
@@ -63,6 +85,10 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
     })
   }
 
+  private retriveError(error: unknown): ApplicationError {
+    return useErrorUtil().retrive<StrapiError>(error, transform)
+  }
+
   async get(url: string, { populate, fields, filters, pagination, sort, publicationState }: StrapiRequest<T> = {}, headers?: Headers | undefined): Promise<Collection<T> | ApplicationError> {
     try {
       const query = this.buldingQuery({ populate, fields, filters, pagination, sort, publicationState })
@@ -73,7 +99,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
       })
       return { items: data.data, pagination: data.meta.pagination }
     } catch (error) {
-      return getAppError(error)
+      return this.retriveError(error)
     }
   }
 
@@ -87,7 +113,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
       })
       return data.data
     } catch (error) {
-      return getAppError(error)
+      return this.retriveError(error)
     }
   }
 
@@ -100,7 +126,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
       })
       return data
     } catch (error) {
-      return getAppError(error)
+      return this.retriveError(error)
     }
   }
 
@@ -113,7 +139,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
         })
         return this.getById(url, id)
     } catch(error) {
-        return getAppError(error)
+      return this.retriveError(error)
     }
   }
 
@@ -126,7 +152,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
       })
       return data
     } catch (error) {
-      return getAppError(error)
+      return this.retriveError(error)
     }
   }
 }

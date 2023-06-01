@@ -3,9 +3,9 @@ import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
 import Cookie from 'js-cookie'
 import { api } from '../baseConfig'
-import { User } from '../types'
+import { User, ApplicationError  } from '../types'
 import { bearerAuthorization } from '../composables/useBearerHeader'
-import { getAppError, ApplicationError } from '../mixin/errorMessageMixing'
+import { useErrorUtil } from '../composables/useApplicationError'
 import { SafeLocalStorageService } from '../mixin/safeLocalStorage'
 
 
@@ -21,7 +21,9 @@ export const useUserStore = defineStore('user', () => {
         username:  safeLocalStorage.getItem('username'),
         email: safeLocalStorage.getItem('email'),
         jwt: safeLocalStorage.getItem('zFJqsz757BscGHsg'),
-        role: safeLocalStorage.getItem('role')
+        role: {
+            type: safeLocalStorage.getItem('role')
+        }
     })
 
     const role = computed(() => user.value.role || safeLocalStorage.getItem('role'))
@@ -32,23 +34,17 @@ export const useUserStore = defineStore('user', () => {
     
     async function authenticate(login: string, password: string): Promise<true | ApplicationError> {
         try {
-            const res = await api.post('/auth/local', {
+            const res = await api.post<User>('/auth/local', {
                 identifier: login,
                 password: password
             })
             const { data } = res
-            user.value = {
-                id: data.user.id,
-                username: data.user.username,
-                email: data.user.email,
-                jwt: data.jwt,
-                role: ""
-            }
+            user.value = data
             user.value.role = await getRoles()
             updateLocalStore()
             return true
         } catch(error) {
-            const appError = getAppError(error)
+            const appError = useErrorUtil().retrive(error)
             if(appError.name === "ValidationError") {
                 appError.message = "Usuário ou senha incorretos!"
             }
@@ -57,14 +53,13 @@ export const useUserStore = defineStore('user', () => {
     }
     
     async function getRoles() {
-        const { data } = await api.get('/users/me', {
+        const { data } = await api.get<User>('/users/me', {
             headers: bearerAuthorization(user.value.jwt),
             params: {
                 populate: ["role"],
             }
         })
-        const { role } = data
-        return role.type as string
+        return data.role
     }
 
     function updateLocalStore() {
@@ -73,7 +68,7 @@ export const useUserStore = defineStore('user', () => {
         safeLocalStorage.setItem('username', username)
         safeLocalStorage.setItem('email', email),
         safeLocalStorage.setItem('zFJqsz757BscGHsg', jwt),
-        safeLocalStorage.setItem('role', role)
+        safeLocalStorage.setItem('role', role.type)
     }
 
     function logout() {

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { Manga } from '../types'
 import { Collection } from '../adapters/BaseAdapter'
 import { useMangaService } from '../api/MangaService'
-import { isApplicationError } from '../mixin/errorMessageMixing'
+import { useErrorUtil } from './useApplicationError'
 
 export function useMangaCollection(page = 1) {
  
@@ -13,7 +13,7 @@ export function useMangaCollection(page = 1) {
 
   const refresh = async function getMangasAndUpdate(page = 1) {
     const result = await mangaService.all({pagination: {page}})
-    if(isApplicationError(result)) {
+    if(useErrorUtil().isAppError(result)) {
       errorMessage.value = result.message
     } else {
       mangaCollection.value = result
