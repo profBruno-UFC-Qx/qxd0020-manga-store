@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Manga } from '../types'
-import { imgURL} from '../mixin/mangaMixing'
+import { useUploadFile } from '../composables/useUploadURL'
 
 defineProps<Omit<Manga, "comments">>()
 
@@ -10,7 +10,7 @@ defineProps<Omit<Manga, "comments">>()
     <div class="col-lg-3 col-md-4 col-sm-1">
         <router-link :to="`/mangas/${id}`" class="text-decoration-none text-reset">
             <div class="card shadow-sm">
-                <img :src="imgURL(cover.url)" class="card-img-top" :alt="title">
+                <img :src="useUploadFile(cover.url)" class="card-img-top" :alt="title">
 
                 <div class="card-body text-center">
                     <h5 class="card-title">{{number}} - {{title}}</h5>

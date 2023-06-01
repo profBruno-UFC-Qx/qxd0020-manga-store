@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { Manga } from '../types'
-import { imgURL } from '../mixin/mangaMixing'
+import { useUploadFile } from '../composables/useUploadURL'
 import { useErrorUtil } from '../composables/useApplicationError'
 import { useMangaService } from '../api/MangaService'
 import CommentsContainer from '../components/Comment/Container.vue'
@@ -46,7 +46,7 @@ onBeforeRouteUpdate(async (to, from) => {
         <div class="card mb-3">
           <div class="row g-0">
             <div class="col-md-4">
-              <img :src="imgURL(manga.cover.url)" class="w-100 rounded-start" :alt="manga.cover.alternativeText">
+              <img :src="useUploadFile(manga.cover.url)" class="w-100 rounded-start" :alt="manga.cover.alternativeText">
             </div>
             <div class="col-md-8">
               <div class="card-body">

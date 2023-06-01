@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { imgURL } from '../../mixin/mangaMixing'
+import { useUploadFile } from '../../composables/useUploadURL'
 import { useErrorUtil } from '../../composables/useApplicationError'
 import { useMangaService } from '../../api/MangaService'
 import { useMangaCollection } from '../../composables/mangaCollection'
@@ -74,7 +74,7 @@ async function deleteManga() {
             <tr v-for="(manga, index) in mangas" :key="manga.id">
               <td><a :id="`${manga.number}`">{{ manga.number }}</a></td>
               <td>{{ manga.title }}</td>
-              <td><img :src="imgURL(manga.cover.url)" class="img-thumbnail rounded-3 w-25" alt="..."/></td>
+              <td><img :src="useUploadFile(manga.cover.url)" class="img-thumbnail rounded-3 w-25" alt="..."/></td>
               <td>{{ manga.number }}</td>
               <td>{{ manga.price }}</td>
               <td>

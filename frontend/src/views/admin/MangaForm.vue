@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Manga } from '../../types'
-import { imgURL } from '../../mixin/mangaMixing'
+import { useUploadFile } from '../../composables/useUploadURL'
 import { useErrorUtil } from '../../composables/useApplicationError'
 import { useMangaService } from '../../api/MangaService'
 
@@ -106,7 +106,7 @@ function showAlert(positive: boolean, message: string) {
       {{ alertMessage }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    <img class="col-auto" v-if="manga.cover" :src="imgURL(manga.cover.url)" />
+    <img class="col-auto" v-if="manga.cover" :src="useUploadFile(manga.cover.url)" />
     <div class="row text-start">
       <div class="col-12 mb-3">
         <label for="coverInput" class="form-label">Manga cover</label>
