@@ -1,7 +1,7 @@
 import { Manga, ApplicationError } from '../types'
 import { RequestOptions, Collection } from '../adapters/BaseAdapter'
 import { StrapiAdapter } from '../adapters/StrapiAdapter'
-import { bearerAuthorization } from '../composables/useBearerHeader'
+import { useBearerAuthorization } from '../composables/useBearerHeader'
 import { useUserStore } from '../stores/user'
 
 class MangaService {
@@ -34,11 +34,11 @@ class MangaService {
     const body = new FormData()
     body.append('files.cover', item.cover)
     body.append('data', JSON.stringify(item))
-    return this.adapter.post(this.endpoint, body, bearerAuthorization(useUserStore().token))
+    return this.adapter.post(this.endpoint, body, useBearerAuthorization(useUserStore().token))
   }
 
   remove(id: number): Promise<Manga | ApplicationError> {
-    return this.adapter.delete(this.endpoint, id, bearerAuthorization(useUserStore().token))
+    return this.adapter.delete(this.endpoint, id, useBearerAuthorization(useUserStore().token))
   }
 
   update(id: number, item: Pick<Manga, "title" | "number" | "price"> &  { cover?: File }): Promise<Manga | ApplicationError> {
@@ -48,7 +48,7 @@ class MangaService {
       body.append('files.cover', item.cover)
       body.append('data', JSON.stringify(item))
     } 
-    return this.adapter.put(this.endpoint, id, body, bearerAuthorization(useUserStore().token))
+    return this.adapter.put(this.endpoint, id, body, useBearerAuthorization(useUserStore().token))
   }
 }
 

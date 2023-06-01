@@ -7,30 +7,30 @@ defineProps<Omit<Manga, "comments">>()
 
 </script>
 <template>
-    <div class="col-lg-3 col-md-4 col-sm-1">
-        <router-link :to="`/mangas/${id}`" class="text-decoration-none text-reset">
-            <div class="card shadow-sm">
-                <img :src="useUploadFile(cover.url)" class="card-img-top" :alt="title">
+  <div class="col-lg-3 col-md-4 col-sm-1">
+    <router-link :to="`/mangas/${id}`" class="text-decoration-none text-reset">
+      <div class="card shadow-sm">
+        <img :src="useUploadFile(cover.url)" class="card-img-top" :alt="title">
 
-                <div class="card-body text-center">
-                    <h5 class="card-title">{{number}} - {{title}}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Preço: {{price}}</h6>
-                    <div class="d-flex justify-content-between align-items-center">
-                    <!--<small class="text-muted">9 mins</small>-->
-                    </div>
-                </div> 
-            </div>
-        </router-link>
-    </div>
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ number }} - {{ title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Preço: {{ price }}</h6>
+          <div class="d-flex justify-content-between align-items-center">
+            <!--<small class="text-muted">9 mins</small>-->
+          </div>
+        </div>
+      </div>
+    </router-link>
+  </div>
 </template>
 
 <style scoped>
 img {
-    filter: grayscale(0%);
-    transition: 0.3s ease-in-out;
+  filter: grayscale(0%);
+  transition: 0.3s ease-in-out;
 }
 
 img:hover {
-    filter: grayscale(100%);
+  filter: grayscale(100%);
 }
 </style>

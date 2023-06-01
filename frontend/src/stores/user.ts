@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 import Cookie from 'js-cookie'
 import { api } from '../baseConfig'
 import { User, ApplicationError  } from '../types'
-import { bearerAuthorization } from '../composables/useBearerHeader'
+import { useBearerAuthorization } from '../composables/useBearerHeader'
 import { useErrorUtil } from '../composables/useApplicationError'
 import { SafeLocalStorageService } from '../mixin/safeLocalStorage'
 
@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', () => {
     
     async function getRoles() {
         const { data } = await api.get<User>('/users/me', {
-            headers: bearerAuthorization(user.value.jwt),
+            headers: useBearerAuthorization(user.value.jwt),
             params: {
                 populate: ["role"],
             }
