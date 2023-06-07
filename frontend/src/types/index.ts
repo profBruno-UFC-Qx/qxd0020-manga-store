@@ -3,9 +3,7 @@ export interface User {
   username: string,
   email: string,
   jwt: string,
-  role: {
-    type: string
-  }
+  role: string
 }
 
 export interface Comment {

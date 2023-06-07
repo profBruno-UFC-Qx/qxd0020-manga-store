@@ -21,9 +21,7 @@ export const useUserStore = defineStore('user', () => {
         username:  safeLocalStorage.getItem('username'),
         email: safeLocalStorage.getItem('email'),
         jwt: safeLocalStorage.getItem('zFJqsz757BscGHsg'),
-        role: {
-            type: safeLocalStorage.getItem('role')
-        }
+        role: safeLocalStorage.getItem('role')
     })
 
     const role = computed(() => user.value.role || safeLocalStorage.getItem('role'))
@@ -34,12 +32,11 @@ export const useUserStore = defineStore('user', () => {
     
     async function authenticate(login: string, password: string): Promise<true | ApplicationError> {
         try {
-            const res = await api.post<User>('/auth/local', {
+            const { data } = await api.post<{jwt: string} & {user: Omit<User, "jwt">}>('/auth/local', {
                 identifier: login,
                 password: password
             })
-            const { data } = res
-            user.value = data
+            user.value = { ...data.user, jwt: data.jwt}
             user.value.role = await getRoles()
             updateLocalStore()
             return true
@@ -53,22 +50,22 @@ export const useUserStore = defineStore('user', () => {
     }
     
     async function getRoles() {
-        const { data } = await api.get<User>('/users/me', {
+        const { data } = await api.get('/users/me', {
             headers: useBearerAuthorization(user.value.jwt),
             params: {
                 populate: ["role"],
             }
         })
-        return data.role
+        return data.role.type
     }
 
     function updateLocalStore() {
         const { id, username, email, jwt, role } = user.value
-        safeLocalStorage.setItem('id', id.toString())
+        safeLocalStorage.setItem('id', `${id}`)
         safeLocalStorage.setItem('username', username)
         safeLocalStorage.setItem('email', email),
         safeLocalStorage.setItem('zFJqsz757BscGHsg', jwt),
-        safeLocalStorage.setItem('role', role.type)
+        safeLocalStorage.setItem('role', role)
     }
 
     function logout() {
