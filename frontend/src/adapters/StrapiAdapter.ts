@@ -119,7 +119,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
 
   async post(url: string, body?: object | FormData | Blob | ArrayBuffer | ArrayBufferView | URLSearchParams | File | undefined, headers?: Headers | undefined): Promise<T | ApplicationError> {
     try {
-      const { data } = await api.post<T>(url, {data: body}, {
+      const { data } = await api.post<T>(url, body, {
         headers: {
           ...headers
         }
@@ -132,7 +132,7 @@ export class StrapiAdapter<T> extends BaseAdapter<T> {
 
   async put(url: string, id: number, body?: object | FormData | Blob | ArrayBuffer | ArrayBufferView | URLSearchParams | File | undefined, headers?: Headers | undefined): Promise<T | ApplicationError> {
     try {
-        await api.put<T>(`${url}/${id}`, {data: body}, {
+        await api.put<T>(`${url}/${id}`, body, {
             headers: {
               ...headers
             }

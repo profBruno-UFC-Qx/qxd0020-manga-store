@@ -55,7 +55,7 @@ function handleFileUpload(event: Event) {
 
 async function create() {
   const { title, number, price } = manga.value
-  if (cover.value) {
+  if (cover.value?.name) {
     const result = await mangaService.create({
       title,
       number,

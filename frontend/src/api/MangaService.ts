@@ -42,7 +42,7 @@ class MangaService {
   }
 
   update(id: number, item: Pick<Manga, "title" | "number" | "price"> &  { cover?: File }): Promise<Manga | ApplicationError> {
-    let body: FormData | typeof item = item
+    let body: FormData | { data: typeof item } = { data: item }
     if (item.cover) {
       body = new FormData()
       body.append('files.cover', item.cover)
